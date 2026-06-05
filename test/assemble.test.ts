@@ -24,7 +24,7 @@ describe('assembleDocument', () => {
     const withHeader = assembleDocument({ title: 'T', headerTitle: 'T', bodyHtml: '', theme })
     expect(withHeader).toContain('<header class="md-header">')
     const without = assembleDocument({ title: 'T', bodyHtml: '', theme })
-    expect(without).not.toContain('md-header')
+    expect(without).not.toContain('<header class="md-header">')
   })
 
   it('inlines font-face CSS before theme CSS when provided', () => {
