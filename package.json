@@ -1,0 +1,36 @@
+{
+  "name": "md2html",
+  "version": "0.1.0",
+  "description": "Render Markdown into a beautiful, self-contained HTML file.",
+  "type": "module",
+  "bin": {
+    "md2html": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "themes"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mdit/plugin-alert": "^0.23.2",
+    "@shikijs/markdown-it": "^4.2.0",
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^14.2.0",
+    "markdown-it-anchor": "^9.2.0",
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "shiki": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^25.9.1",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}
