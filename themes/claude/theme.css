@@ -1,0 +1,5 @@
+/* Claude theme — minimal; full Warm Serif Essay styling added in Task 10. */
+.theme-claude .md-content {
+  max-width: 64ch;
+  margin: 0 auto;
+}
