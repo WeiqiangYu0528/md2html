@@ -3,6 +3,8 @@ import anchor from 'markdown-it-anchor'
 import footnote from 'markdown-it-footnote'
 import taskLists from 'markdown-it-task-lists'
 import Shiki from '@shikijs/markdown-it'
+import { alert } from '@mdit/plugin-alert'
+import { calloutOptions } from './callouts'
 
 /**
  * Build a markdown-it renderer with all v1 features enabled.
@@ -14,6 +16,7 @@ export async function createRenderer(shikiTheme: string): Promise<MarkdownIt> {
   md.use(anchor)
   md.use(footnote)
   md.use(taskLists)
+  md.use(alert, calloutOptions)
   md.use(await Shiki({ theme: shikiTheme }))
   return md
 }
