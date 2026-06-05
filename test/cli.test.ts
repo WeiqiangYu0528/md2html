@@ -1,0 +1,47 @@
+import { describe, it, expect } from 'vitest'
+import { mkdtempSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { run } from '../src/cli'
+
+function tmpFile(name: string, content: string): string {
+  const dir = mkdtempSync(join(tmpdir(), 'md2html-'))
+  const p = join(dir, name)
+  writeFileSync(p, content)
+  return p
+}
+
+describe('cli run()', () => {
+  it('converts a Markdown file to a self-contained HTML file', async () => {
+    const input = tmpFile('note.md', '# Title\n\nHello *world*.')
+    const code = await run([input])
+    expect(code).toBe(0)
+    const out = input.replace(/\.md$/, '.html')
+    expect(existsSync(out)).toBe(true)
+    const html = readFileSync(out, 'utf8')
+    expect(html).toContain('<!DOCTYPE html>')
+    expect(html).toContain('<body class="theme-claude">')
+    expect(html).toContain('<style>')
+  })
+
+  it('writes to an explicit --output path', async () => {
+    const input = tmpFile('a.md', '# x')
+    const out = input.replace(/a\.md$/, 'custom.html')
+    const code = await run([input, '-o', out])
+    expect(code).toBe(0)
+    expect(existsSync(out)).toBe(true)
+  })
+
+  it('returns 1 for a missing input file', async () => {
+    expect(await run(['/no/such/file.md'])).toBe(1)
+  })
+
+  it('returns 1 for an unknown theme', async () => {
+    const input = tmpFile('b.md', '# x')
+    expect(await run([input, '--theme', 'bogus'])).toBe(1)
+  })
+
+  it('lists themes and exits 0', async () => {
+    expect(await run(['--list-themes'])).toBe(0)
+  })
+})
