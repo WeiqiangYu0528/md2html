@@ -100,5 +100,10 @@ export async function run(argv: string[]): Promise<number> {
 const invokedDirectly =
   process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href
 if (invokedDirectly) {
-  run(process.argv.slice(2)).then((code) => process.exit(code))
+  run(process.argv.slice(2))
+    .then((code) => process.exit(code))
+    .catch((err) => {
+      process.stderr.write(`Error: ${(err as Error).message}\n`)
+      process.exit(1)
+    })
 }
