@@ -4,9 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-**Greenfield.** As of this writing the repository contains no source code — only docs. The notes below describe the product intent and the architectural direction agreed upon at kickoff. Treat them as the north star, not as documentation of existing code. Update this file as real structure lands.
+Implemented: the `md2html` CLI (Node.js + TypeScript). Converts a Markdown file to one
+self-contained HTML file. Reference theme: **Claude** (Warm Serif Essay).
 
-**Approved design spec:** [docs/superpowers/specs/2026-06-05-md2html-cli-design.md](docs/superpowers/specs/2026-06-05-md2html-cli-design.md) — the canonical, detailed design (CLI shape, two-layer architecture, theme contract, Claude theme, tech stack, testing, deferred roadmap). Read it before implementing.
+**Approved design spec:** [docs/superpowers/specs/2026-06-05-md2html-cli-design.md](docs/superpowers/specs/2026-06-05-md2html-cli-design.md)
+**Theme contract:** [THEME-CONTRACT.md](THEME-CONTRACT.md)
+
+## Commands
+
+- `npm test` — run the Vitest suite · single file: `npx vitest run test/<name>.test.ts`
+- `npm run typecheck` — `tsc --noEmit`
+- `npm run build` — bundle to `dist/cli.js`
+- `node dist/cli.js <file.md>` — convert a file (after building)
 
 ## What we're building
 
@@ -32,4 +41,4 @@ The Claude theme is the reference implementation. Design choices here (type scal
 - **Design decisions are real work.** Before building features, themes, or rendering behavior, use the `superpowers:brainstorming` skill to pin down intent and the theme contract — this product is mostly design decisions, and a wrong contract is expensive to unwind.
 - **Don't leak presentation into conversion.** Any color/font/spacing logic appearing in the Markdown→HTML layer is a bug in the architecture.
 - **Verify visually, not just structurally.** Correct HTML that reads poorly is a failure here. Check rendered output, not just that conversion ran.
-- This section should be replaced with real **build / test / run / single-test** commands the moment a toolchain is chosen — leaving them unspecified is a deliberate gap, not an omission to ignore.
+- **Verify visually after changes.** Run the sample (`node dist/cli.js samples/sample.md`) and open the output to confirm rendering quality — correct HTML that reads poorly is still a failure.
