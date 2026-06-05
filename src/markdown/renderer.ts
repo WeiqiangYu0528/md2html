@@ -6,6 +6,16 @@ import Shiki from '@shikijs/markdown-it'
 import { alert } from '@mdit/plugin-alert'
 import { calloutOptions } from './callouts'
 
+function slugify(text: string): string {
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')   // drop punctuation/symbols
+    .replace(/\s+/g, '-')        // spaces → hyphens
+    .replace(/-+/g, '-')         // collapse repeats
+    .replace(/^-+|-+$/g, '')     // trim leading/trailing hyphens
+}
+
 /**
  * Build a markdown-it renderer with all v1 features enabled.
  * Async because Shiki must load its highlighter/theme before use.
@@ -13,7 +23,7 @@ import { calloutOptions } from './callouts'
  */
 export async function createRenderer(shikiTheme: string): Promise<MarkdownIt> {
   const md = new MarkdownIt({ html: true, linkify: true, typographer: true })
-  md.use(anchor)
+  md.use(anchor, { slugify })
   md.use(footnote)
   md.use(taskLists)
   md.use(alert, calloutOptions)

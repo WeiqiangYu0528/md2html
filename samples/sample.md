@@ -2,8 +2,6 @@
 title: Reading Markdown, Beautifully
 ---
 
-# Reading Markdown, Beautifully
-
 `md2html` turns any Markdown file into an HTML page you actually enjoy reading.
 
 ## Why

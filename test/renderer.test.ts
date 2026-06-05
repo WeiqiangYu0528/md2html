@@ -31,4 +31,9 @@ describe('createRenderer', () => {
     expect(html).toContain('class="shiki')
     expect(html).toContain('style="')
   })
+
+  it('produces clean punctuation-free heading slugs', () => {
+    expect(md.render('# Reading Markdown, Beautifully')).toContain('id="reading-markdown-beautifully"')
+    expect(md.render('## Hello, World! & Friends')).toContain('id="hello-world-friends"')
+  })
 })
