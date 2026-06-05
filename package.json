@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Render Markdown into a beautiful, self-contained HTML file.",
   "type": "module",
+  "engines": {
+    "node": ">=18.3.0"
+  },
   "bin": {
     "md2html": "./dist/cli.js"
   },
