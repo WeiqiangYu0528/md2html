@@ -16,6 +16,12 @@ describe('createRenderer', () => {
     expect(html).toContain('<td>1</td>')
   })
 
+  it('wraps tables in a horizontally-scrollable container', () => {
+    const html = md.render('| a | b |\n|---|---|\n| 1 | 2 |')
+    expect(html).toContain('<div class="table-wrap">')
+    expect(html).toContain('</table>\n</div>')
+  })
+
   it('renders footnotes', () => {
     const html = md.render('Text[^1]\n\n[^1]: A note')
     expect(html).toContain('class="footnotes"')

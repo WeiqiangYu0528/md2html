@@ -50,12 +50,13 @@ body.theme-claude {
   color: #1a1915;
   letter-spacing: -0.01em;
   margin: 2.4rem 0 1rem;
+  text-wrap: balance;
 }
 .theme-claude h1 { font-size: 2.4rem; font-weight: 600; }
 .theme-claude h2 { font-size: 1.8rem; font-weight: 600; border-bottom: 1px solid var(--rule); padding-bottom: 0.35rem; }
 .theme-claude h3 { font-size: 1.4rem; font-weight: 600; }
 .theme-claude h4 { font-size: 1.15rem; font-weight: 700; }
-.theme-claude p { margin: 1.1rem 0; }
+.theme-claude p { margin: 1.1rem 0; text-wrap: pretty; }
 
 .theme-claude a {
   color: var(--accent-strong);
@@ -63,7 +64,7 @@ body.theme-claude {
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
-.theme-claude a:hover { color: var(--accent); }
+.theme-claude a:hover { color: var(--accent-strong); text-decoration-thickness: 2px; }
 
 .theme-claude code {
   font-family: ui-monospace, 'SF Mono', 'Menlo', monospace;
@@ -119,11 +120,17 @@ body.theme-claude {
 .theme-claude .callout-important { border-left-color: #8a63d2; background: #f1ecfa; }
 .theme-claude .callout-warning { border-left-color: #d99a2b; background: #fbf3e2; }
 .theme-claude .callout-caution { border-left-color: #d9534f; background: #fbecea; }
+.theme-claude .callout-note .callout-title { color: #3a6fd0; }
+.theme-claude .callout-tip .callout-title { color: #2f8f53; }
+.theme-claude .callout-important .callout-title { color: #7a4fc0; }
+.theme-claude .callout-warning .callout-title { color: #b9791f; }
+.theme-claude .callout-caution .callout-title { color: #c0413c; }
 
+.theme-claude .table-wrap { margin: 1.6rem 0; overflow-x: auto; }
 .theme-claude table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1.6rem 0;
+  margin: 0;
   font-size: 0.95rem;
 }
 .theme-claude th, .theme-claude td {
@@ -132,6 +139,10 @@ body.theme-claude {
   border-bottom: 1px solid var(--rule);
 }
 .theme-claude th { font-family: Georgia, serif; }
+.theme-claude thead th {
+  background: var(--tint);
+  border-bottom: 2px solid var(--rule);
+}
 .theme-claude tbody tr:hover { background: rgba(0, 0, 0, 0.02); }
 
 .theme-claude ul, .theme-claude ol { padding-left: 1.4rem; }
@@ -141,6 +152,14 @@ body.theme-claude {
 
 .theme-claude img { max-width: 100%; height: auto; border-radius: 8px; }
 .theme-claude hr { border: none; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+
+.theme-claude .footnote-ref a {
+  font-size: 0.82em;
+  text-decoration: none;
+  color: var(--accent-strong);
+  padding: 0 0.1em;
+}
+.theme-claude .footnote-ref a:hover { text-decoration: underline; }
 
 .theme-claude .footnotes {
   margin-top: 3rem;
@@ -171,6 +190,7 @@ body.theme-claude {
 <li class="task-list-item"><input class="task-list-item-checkbox" disabled="" type="checkbox"> todo</li>
 </ul>
 <h2 id="table" tabindex="-1">Table</h2>
+<div class="table-wrap">
 <table>
 <thead>
 <tr>
@@ -185,6 +205,7 @@ body.theme-claude {
 </tr>
 </tbody>
 </table>
+</div>
 <h2 id="code" tabindex="-1">Code</h2>
 <pre class="shiki vitesse-dark" style="background-color:#121212;color:#dbd7caee" tabindex="0"><code class="language-js"><span class="line"><span style="color:#CB7676">const</span><span style="color:#BD976A"> x</span><span style="color:#666666"> =</span><span style="color:#4C9A91"> 1</span></span>
 <span class="line"><span style="color:#BD976A">console</span><span style="color:#666666">.</span><span style="color:#80A665">log</span><span style="color:#666666">(</span><span style="color:#BD976A">x</span><span style="color:#666666">)</span></span></code></pre>

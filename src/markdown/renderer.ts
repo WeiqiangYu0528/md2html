@@ -28,5 +28,9 @@ export async function createRenderer(shikiTheme: string): Promise<MarkdownIt> {
   md.use(taskLists)
   md.use(alert, calloutOptions)
   md.use(await Shiki({ theme: shikiTheme }))
+
+  md.renderer.rules.table_open = () => '<div class="table-wrap">\n<table>\n'
+  md.renderer.rules.table_close = () => '</table>\n</div>\n'
+
   return md
 }

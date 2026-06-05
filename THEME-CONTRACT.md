@@ -14,7 +14,8 @@ under `themes/<name>/` with `theme.json` + `theme.css`; no parser code changes.
 - Code blocks: `<pre class="shiki" style="…">` with inline token colors (Shiki); inline code is `<code>`
 - Task lists: `<li class="task-list-item">` containing an `<input type="checkbox">`
 - Footnotes: a trailing `<section class="footnotes">`
-- Tables, blockquotes, lists, images, links, `<hr>`: plain semantic tags
+- Tables are wrapped: `<div class="table-wrap"><table>…</table></div>` (the wrapper enables horizontal scroll on narrow screens)
+- Blockquotes, lists, images, links, `<hr>`: plain semantic tags
 
 ## theme.json
 A theme manifest declares its name, description, the Shiki code theme, and any
