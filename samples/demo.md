@@ -66,6 +66,19 @@ def fib(n: int) -> int:
     return a
 ```
 
+## Math
+
+Inline math sits in the line of text — the mass–energy relation $E = mc^2$, or
+Euler's identity $e^{i\pi} + 1 = 0$ — at the size of the surrounding prose.
+
+Display math is centered on its own line:
+
+$$\int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}$$
+
+Backslash delimiters work too: \(a^2 + b^2 = c^2\), and
+
+\[ \sum_{k=1}^{n} k = \frac{n(n+1)}{2} \]
+
 ## A table
 
 | Feature            | Status | Notes                          |

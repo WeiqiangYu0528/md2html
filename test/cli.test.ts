@@ -44,4 +44,17 @@ describe('cli run()', () => {
   it('lists themes and exits 0', async () => {
     expect(await run(['--list-themes'])).toBe(0)
   })
+
+  it('embeds KaTeX CSS + fonts only when the document has math', async () => {
+    const mathIn = tmpFile('m.md', 'Euler: $e^{i\\pi}+1=0$.')
+    expect(await run([mathIn])).toBe(0)
+    const mathHtml = readFileSync(mathIn.replace(/\.md$/, '.html'), 'utf8')
+    expect(mathHtml).toContain('class="katex"')
+    expect(mathHtml).toContain('data:font/woff2;base64,')
+
+    const plainIn = tmpFile('p.md', '# Just prose\n\nNo math here.')
+    expect(await run([plainIn])).toBe(0)
+    const plainHtml = readFileSync(plainIn.replace(/\.md$/, '.html'), 'utf8')
+    expect(plainHtml).not.toContain('data:font/woff2;base64,')
+  })
 })

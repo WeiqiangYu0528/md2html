@@ -6,6 +6,7 @@ import { convert } from './convert'
 import { loadTheme, listThemes } from './themes'
 import { assembleDocument } from './assemble'
 import { buildFontFaceCss } from './fonts'
+import { buildKatexCss } from './math/katex-css'
 
 const USAGE = `md2html — render Markdown to a self-contained, beautiful HTML file
 
@@ -69,7 +70,7 @@ export async function run(argv: string[]): Promise<number> {
     return 1
   }
 
-  const { metadata, bodyHtml } = await convert(raw, theme.shikiTheme)
+  const { metadata, bodyHtml, hasMath } = await convert(raw, theme.shikiTheme)
   const fmTitle = typeof metadata.title === 'string' ? metadata.title : undefined
   const title = fmTitle ?? basename(inputPath, extname(inputPath))
 
@@ -82,7 +83,12 @@ export async function run(argv: string[]): Promise<number> {
     }
   }
 
-  const html = assembleDocument({ title, headerTitle: fmTitle, bodyHtml, theme, fontFaceCss })
+  // KaTeX assets are embedded only when the document actually uses math, so
+  // non-math documents stay byte-for-byte unchanged. Independent of
+  // --embed-fonts (which governs the theme's text fonts).
+  const katexCss = hasMath ? buildKatexCss() : ''
+
+  const html = assembleDocument({ title, headerTitle: fmTitle, bodyHtml, theme, fontFaceCss, katexCss })
 
   const outputPath = (values.output as string) ?? resolve(inputPath.replace(/\.md$/i, '') + '.html')
   try {

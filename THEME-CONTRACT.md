@@ -12,6 +12,7 @@ under `themes/<name>/` with `theme.json` + `theme.css`; no parser code changes.
 - Headings `<h1>`–`<h6>` carry stable `id` attributes (slugified text)
 - Callouts: `<div class="callout callout-note|tip|important|warning|caution">` with a leading `<p class="callout-title">`. The title opens with a presentation-free icon hook `<span class="callout-icon" aria-hidden="true"></span>`; the theme supplies the glyph and color via CSS (e.g. a masked SVG), so iconography is theme-owned.
 - Code blocks: `<pre class="shiki" style="…">` with inline token colors (Shiki); inline code is `<code>`
+- Math: inline math is `<eq>…</eq>`; display math is `<section><eqn>…</eqn></section>`. Inside each, KaTeX emits its own `.katex` / `.katex-display` markup (glyph metrics — a converter-owned correctness asset, like Shiki tokens, not theme-owned). A theme styles the `<eq>` / `<eqn>` wrappers and may set `.katex` color/size; the KaTeX stylesheet (with fonts inlined) is added to the document automatically, and only when the document contains math.
 - Task lists: `<li class="task-list-item">` containing an `<input type="checkbox">`
 - Footnotes: a trailing `<section class="footnotes">`
 - Tables are wrapped: `<div class="table-wrap"><table>…</table></div>` (the wrapper enables horizontal scroll on narrow screens)

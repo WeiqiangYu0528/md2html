@@ -242,6 +242,22 @@ body.theme-claude {
   color: var(--muted);
 }
 
+/* Math (KaTeX via markdown-it-texmath). The converter emits <eq> for inline
+   math and <section><eqn>…</eqn></section> for display math; KaTeX owns the
+   glyph metrics. The theme only sets color, spacing, and overflow. */
+.theme-claude eq { color: inherit; }
+.theme-claude .katex { color: inherit; font-size: 1.05em; }
+.theme-claude section > eqn {
+  display: block;
+  margin: 1.6rem 0;
+}
+.theme-claude .katex-display {
+  margin: 0;               /* spacing comes from the <eqn> wrapper */
+  overflow-x: auto;        /* wide equations scroll instead of overflowing the page */
+  overflow-y: hidden;
+  padding: 0.25rem 0;      /* room for the scrollbar without clipping glyphs */
+}
+
 </style>
 </head>
 <body class="theme-claude">
