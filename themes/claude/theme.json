@@ -1,6 +1,6 @@
 {
   "name": "claude",
   "description": "Warm serif essay theme inspired by the Anthropic aesthetic.",
-  "shikiTheme": "vitesse-dark",
+  "shikiThemeFile": "code-theme.json",
   "fonts": []
 }

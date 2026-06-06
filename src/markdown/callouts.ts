@@ -31,7 +31,9 @@ export const calloutOptions: MarkdownItAlertOptions = {
     // tokens[index].markup is set by the plugin to the lowercase alert name
     const type = tokens[index].markup ?? 'note'
     const label = LABELS[type] ?? type.charAt(0).toUpperCase() + type.slice(1)
-    return `<div class="callout callout-${type}">\n<p class="callout-title">${label}</p>\n`
+    // The icon span is a structural hook; the theme supplies the actual art
+    // (and color) via CSS, so different themes can use different iconography.
+    return `<div class="callout callout-${type}">\n<p class="callout-title"><span class="callout-icon" aria-hidden="true"></span>${label}</p>\n`
   },
   titleRender: () => '',
 }

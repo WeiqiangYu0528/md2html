@@ -5,10 +5,13 @@ export interface FontFace {
   file: string // path relative to the theme directory
 }
 
+/** A Shiki theme: either a built-in theme name, or a parsed custom theme object. */
+export type ShikiTheme = string | Record<string, unknown>
+
 export interface Theme {
   name: string
   description: string
-  shikiTheme: string
+  shikiTheme: ShikiTheme
   css: string
   fonts: FontFace[]
   dir: string // absolute path to the theme directory

@@ -24,10 +24,15 @@ export function loadTheme(name: string): Theme {
   }
   const manifest = JSON.parse(readFileSync(join(dir, 'theme.json'), 'utf8'))
   const css = readFileSync(join(dir, 'theme.css'), 'utf8')
+  // A theme can either name a built-in Shiki theme (`shikiTheme`) or ship its
+  // own custom theme JSON in the theme folder (`shikiThemeFile`).
+  const shikiTheme = manifest.shikiThemeFile
+    ? JSON.parse(readFileSync(join(dir, manifest.shikiThemeFile), 'utf8'))
+    : manifest.shikiTheme
   return {
     name: manifest.name,
     description: manifest.description,
-    shikiTheme: manifest.shikiTheme,
+    shikiTheme,
     fonts: manifest.fonts ?? [],
     css,
     dir,
