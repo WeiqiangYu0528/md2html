@@ -5,6 +5,7 @@ import taskLists from 'markdown-it-task-lists'
 import Shiki from '@shikijs/markdown-it'
 import { alert } from '@mdit/plugin-alert'
 import { calloutOptions } from './callouts'
+import type { ShikiTheme } from '../types'
 
 function slugify(text: string): string {
   return text
@@ -19,15 +20,16 @@ function slugify(text: string): string {
 /**
  * Build a markdown-it renderer with all v1 features enabled.
  * Async because Shiki must load its highlighter/theme before use.
- * @param shikiTheme name of a built-in Shiki theme (e.g. "vitesse-dark")
+ * @param shikiTheme a built-in Shiki theme name, or a parsed custom theme object
  */
-export async function createRenderer(shikiTheme: string): Promise<MarkdownIt> {
+export async function createRenderer(shikiTheme: ShikiTheme): Promise<MarkdownIt> {
   const md = new MarkdownIt({ html: true, linkify: true, typographer: true })
   md.use(anchor, { slugify })
   md.use(footnote)
   md.use(taskLists)
   md.use(alert, calloutOptions)
-  md.use(await Shiki({ theme: shikiTheme }))
+  // Shiki accepts either a theme name or a raw theme object.
+  md.use(await Shiki({ theme: shikiTheme as never }))
 
   md.renderer.rules.table_open = () => '<div class="table-wrap">\n<table>\n'
   md.renderer.rules.table_close = () => '</table>\n</div>\n'
