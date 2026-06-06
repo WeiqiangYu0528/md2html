@@ -60,6 +60,20 @@ export function renderToc(headings: Heading[], lang: string): string {
   )
 }
 
+/**
+ * Build the TOC nav for a parsed document, applying the trigger rules:
+ * `toc: false` suppresses; `toc: true` forces (when there is ≥1 heading);
+ * otherwise a TOC appears only with 3+ headings.
+ */
+export function buildToc(tokens: Token[], opts: { lang: string; toc?: unknown }): string {
+  if (opts.toc === false) return ''
+  const headings = collectHeadings(tokens)
+  if (headings.length === 0) return ''
+  const force = opts.toc === true
+  if (!force && headings.length < 3) return ''
+  return renderToc(headings, opts.lang)
+}
+
 /** Collect h2 and h3 headings (with their anchor ids) from a parsed token stream. */
 export function collectHeadings(tokens: Token[]): Heading[] {
   const headings: Heading[] = []

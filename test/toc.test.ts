@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import type MarkdownIt from 'markdown-it'
 import { createRenderer } from '../src/markdown/renderer'
-import { collectHeadings, renderToc } from '../src/toc'
+import { collectHeadings, renderToc, buildToc } from '../src/toc'
 
 let md: MarkdownIt
 beforeAll(async () => { md = await createRenderer('vitesse-dark') })
@@ -47,5 +47,30 @@ describe('renderToc', () => {
   it('escapes heading text and returns empty string for no headings', () => {
     expect(renderToc([{ level: 2, id: 'x', text: 'A & <b>' }], 'en')).toContain('A &amp; &lt;b&gt;')
     expect(renderToc([], 'en')).toBe('')
+  })
+})
+
+describe('buildToc trigger', () => {
+  const parse = (src: string) => md.parse(src, {})
+
+  it('emits a TOC when there are 3+ headings', () => {
+    const html = buildToc(parse('## A\n\n## B\n\n## C'), { lang: 'en' })
+    expect(html).toContain('<nav class="toc"')
+  })
+
+  it('emits nothing for fewer than 3 headings by default', () => {
+    expect(buildToc(parse('## A\n\n## B'), { lang: 'en' })).toBe('')
+  })
+
+  it('toc:false suppresses even with many headings', () => {
+    expect(buildToc(parse('## A\n\n## B\n\n## C'), { lang: 'en', toc: false })).toBe('')
+  })
+
+  it('toc:true forces a TOC even with one heading', () => {
+    expect(buildToc(parse('## Only'), { lang: 'en', toc: true })).toContain('<nav class="toc"')
+  })
+
+  it('emits nothing when there are no headings', () => {
+    expect(buildToc(parse('Just text.'), { lang: 'en', toc: true })).toBe('')
   })
 })
