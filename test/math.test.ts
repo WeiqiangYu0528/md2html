@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import type MarkdownIt from 'markdown-it'
 import { createRenderer } from '../src/markdown/renderer'
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { convert } from '../src/convert'
 
 let md: MarkdownIt
 beforeAll(async () => { md = await createRenderer('vitesse-dark') })
@@ -42,5 +45,18 @@ describe('math rendering', () => {
     const html = md.render('Broken: $\\frac{1}{$')
     expect(html).toContain('<eq>') // wrapper still emitted
     expect(html).toContain('katex-error')
+  })
+})
+
+describe('math snapshot', () => {
+  it('renders the math fixture to stable body HTML', async () => {
+    const raw = readFileSync(
+      fileURLToPath(new URL('./fixtures/math.md', import.meta.url)),
+      'utf8',
+    )
+    // Snapshot only the body HTML (KaTeX markup) — not the assembled document —
+    // so the snapshot stays readable and free of base64 font payloads.
+    const { bodyHtml } = await convert(raw, 'vitesse-dark')
+    expect(bodyHtml).toMatchSnapshot()
   })
 })
