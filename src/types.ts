@@ -17,4 +17,6 @@ export interface Theme {
   dir: string // absolute path to the theme directory
   /** Optional Mermaid init config (theme/themeVariables) for diagram colors. */
   mermaid?: Record<string, unknown>
+  /** Body scope class (CSS selector prefix). A theme that `extends` another uses the base's. */
+  scopeClass?: string
 }

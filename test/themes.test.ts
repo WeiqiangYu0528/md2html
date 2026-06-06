@@ -33,4 +33,23 @@ describe('themes', () => {
     expect(theme.mermaid).toBeTypeOf('object')
     expect((theme.mermaid as Record<string, unknown>).themeVariables).toBeTypeOf('object')
   })
+
+  it('sets scopeClass to the theme name for a base theme', () => {
+    expect(loadTheme('claude').scopeClass).toBe('claude')
+  })
+
+  it('lists claude-dark', () => {
+    expect(listThemes()).toContain('claude-dark')
+  })
+
+  it('loads claude-dark as an extension of claude (dark palette + base structure)', () => {
+    const theme = loadTheme('claude-dark')
+    expect(theme.name).toBe('claude-dark')
+    expect(theme.scopeClass).toBe('claude')                  // inherits base scope class
+    expect(theme.css).toContain('.theme-claude .md-content')  // base structural rule inherited
+    expect(theme.css).toContain('--bg: #1b1916')              // dark :root override present
+    expect(theme.css.indexOf('--bg: #faf9f5')).toBeLessThan(theme.css.indexOf('--bg: #1b1916')) // light first, dark wins
+    expect(theme.shikiTheme).toBeTypeOf('object')             // own dark code palette
+    expect(theme.mermaid).toBeTypeOf('object')                // own dark mermaid config
+  })
 })
