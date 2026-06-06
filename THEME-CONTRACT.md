@@ -42,3 +42,10 @@ The code theme is given **one of two ways**:
 
 A theme may also declare an optional `mermaid` object (a Mermaid init config:
 `theme`/`themeVariables`) so diagrams match the theme's palette.
+
+A theme may set `extends` to the name of a base theme. It then inherits the base's CSS
+(prepended) and the base's body scope class (`<body class="theme-<base>">`), so the base's
+structural rules apply; the extending theme's own `theme.css` comes last, so a `:root` palette
+override wins. Other fields (`shikiThemeFile`/`shikiTheme`, `mermaid`, `fonts`) are the
+extending theme's own — e.g. `claude-dark` extends `claude` and supplies only a dark palette,
+a dark code theme, and a dark Mermaid config.
