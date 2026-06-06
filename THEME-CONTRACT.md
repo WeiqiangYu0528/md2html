@@ -16,6 +16,7 @@ under `themes/<name>/` with `theme.json` + `theme.css`; no parser code changes.
 - Task lists: `<li class="task-list-item">` containing an `<input type="checkbox">`
 - Footnotes: a trailing `<section class="footnotes">`
 - Tables are wrapped: `<div class="table-wrap"><table>…</table></div>` (the wrapper enables horizontal scroll on narrow screens)
+- Table of contents (when generated): `<nav class="toc" aria-label="Table of contents">` containing a `<p class="toc-title">` and a nested `<ul>` of `<a href="#slug">` links. Emitted by the converter after the header (auto when the doc has 3+ h2/h3 headings, or via frontmatter `toc: true`/`toc: false`); the theme styles it and may reposition it (the Claude theme makes it a sticky side-rail on wide screens). The title is localized (`Contents` / `目录`).
 - Blockquotes, lists, images, links, `<hr>`: plain semantic tags
 
 ## Language

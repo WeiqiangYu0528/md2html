@@ -40,4 +40,20 @@ describe('convert', () => {
     const { lang } = await convert('---\nlang: zh\n---\nMostly English body.', 'vitesse-dark')
     expect(lang).toBe('zh')
   })
+
+  it('returns a TOC for a multi-heading document', async () => {
+    const { toc } = await convert('## One\n\n## Two\n\n## Three', 'vitesse-dark')
+    expect(toc).toContain('<nav class="toc"')
+    expect(toc).toContain('<a href="#one">One</a>')
+  })
+
+  it('returns an empty toc for a short document', async () => {
+    const { toc } = await convert('# Title\n\nBody only.', 'vitesse-dark')
+    expect(toc).toBe('')
+  })
+
+  it('honors frontmatter toc:false', async () => {
+    const { toc } = await convert('---\ntoc: false\n---\n## A\n\n## B\n\n## C', 'vitesse-dark')
+    expect(toc).toBe('')
+  })
 })

@@ -12,10 +12,12 @@ export interface AssembleInput {
   katexCss?: string
   /** Document language for the <html lang> attribute (default "en"). */
   lang?: string
+  /** Table-of-contents nav HTML, injected after the header (default ""). */
+  toc?: string
 }
 
 export function assembleDocument(input: AssembleInput): string {
-  const { title, bodyHtml, theme, headerTitle, fontFaceCss = '', katexCss = '', lang = 'en' } = input
+  const { title, bodyHtml, theme, headerTitle, fontFaceCss = '', katexCss = '', lang = 'en', toc = '' } = input
   const header = headerTitle
     ? `<header class="md-header"><h1>${escapeHtml(headerTitle)}</h1></header>\n`
     : ''
@@ -31,7 +33,7 @@ ${fontFaceCss}${fontFaceCss ? '\n' : ''}${katexCss}${katexCss ? '\n' : ''}${them
 </head>
 <body class="theme-${theme.name}">
 <article class="md-content">
-${header}${bodyHtml}
+${header}${toc}${bodyHtml}
 </article>
 </body>
 </html>

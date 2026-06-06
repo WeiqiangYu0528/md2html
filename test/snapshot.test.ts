@@ -12,12 +12,13 @@ describe('full pipeline', () => {
       'utf8',
     )
     const theme = loadTheme('claude')
-    const { metadata, bodyHtml } = await convert(raw, theme.shikiTheme)
+    const { metadata, bodyHtml, toc } = await convert(raw, theme.shikiTheme)
     const html = assembleDocument({
       title: String(metadata.title ?? 'Untitled'),
       headerTitle: typeof metadata.title === 'string' ? metadata.title : undefined,
       bodyHtml,
       theme,
+      toc,
     })
     expect(html).toMatchSnapshot()
   })

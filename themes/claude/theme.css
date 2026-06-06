@@ -264,3 +264,49 @@ body.theme-claude {
 .theme-claude:lang(zh) h4, .theme-claude:lang(zh) h5, .theme-claude:lang(zh) h6 {
   letter-spacing: normal;
 }
+
+/* Smooth in-page jumps for TOC links; offset so anchored headings aren't clipped. */
+html { scroll-behavior: smooth; }
+.theme-claude h1, .theme-claude h2, .theme-claude h3,
+.theme-claude h4, .theme-claude h5, .theme-claude h6 { scroll-margin-top: 2rem; }
+
+/* Table of contents. The converter emits a nav.toc element after the header.
+   Mobile-first: a calm "Contents" panel. On wide screens it becomes a sticky
+   side-rail pulled into the left gutter. Zero JS. */
+.theme-claude .toc {
+  margin: 0 0 2.5rem;
+  padding: 1rem 1.3rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--tint);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.theme-claude .toc-title {
+  margin: 0 0 0.5rem;
+  font-family: Georgia, 'Tiempos Headline', serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.theme-claude .toc ul { list-style: none; margin: 0; padding-left: 0; }
+.theme-claude .toc ul ul { padding-left: 1rem; margin: 0.2rem 0; }
+.theme-claude .toc li { margin: 0.3rem 0; }
+.theme-claude .toc a { color: var(--muted); text-decoration: none; }
+.theme-claude .toc a:hover { color: var(--accent-strong); text-decoration: underline; }
+
+@media (min-width: 1200px) {
+  .theme-claude .toc {
+    float: left;
+    position: sticky;
+    top: 2rem;
+    width: 200px;
+    margin-left: -244px;   /* pull into the left gutter, beside the centered column */
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 0.85rem;
+  }
+}

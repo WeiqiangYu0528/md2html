@@ -53,4 +53,20 @@ describe('assembleDocument', () => {
     const html = assembleDocument({ title: 'T', bodyHtml: '', theme })
     expect(html).toContain('<html lang="en">')
   })
+
+  it('injects the TOC between the header and the body when provided', () => {
+    const html = assembleDocument({
+      title: 'T', headerTitle: 'T', bodyHtml: '<p>Body</p>', theme,
+      toc: '<nav class="toc">TOC</nav>',
+    })
+    expect(html).toContain('<nav class="toc">TOC</nav>')
+    // order: header h1, then toc, then body
+    expect(html.indexOf('<header')).toBeLessThan(html.indexOf('<nav class="toc">'))
+    expect(html.indexOf('<nav class="toc">')).toBeLessThan(html.indexOf('<p>Body</p>'))
+  })
+
+  it('omits the TOC when not provided', () => {
+    const html = assembleDocument({ title: 'T', bodyHtml: '<p>Body</p>', theme })
+    expect(html).not.toContain('class="toc"')
+  })
 })
