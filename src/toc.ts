@@ -15,6 +15,51 @@ function headingText(inline: Token): string {
   return parts.length > 0 ? parts.join('') : inline.content
 }
 
+const TOC_TITLES: Record<string, string> = { zh: '目录' }
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+/**
+ * Render a nested TOC nav from h2/h3 headings. h3s nest under the preceding h2;
+ * an h3 with no preceding h2 degrades to a top-level item. Returns '' if empty.
+ */
+export function renderToc(headings: Heading[], lang: string): string {
+  if (headings.length === 0) return ''
+  const title = TOC_TITLES[lang] ?? 'Contents'
+  const out: string[] = []
+  let inLi = false   // a top-level <li> is open
+  let inSub = false  // a nested <ul> inside the current <li> is open
+
+  const closeSub = () => { if (inSub) { out.push('</ul>'); inSub = false } }
+  const closeLi = () => { closeSub(); if (inLi) { out.push('</li>'); inLi = false } }
+
+  for (const h of headings) {
+    const link = `<a href="#${escapeHtml(h.id)}">${escapeHtml(h.text)}</a>`
+    if (h.level === 2) {
+      closeLi()
+      out.push(`<li>${link}`)
+      inLi = true
+    } else {
+      if (!inLi) { out.push(`<li>${link}</li>`); continue }
+      if (!inSub) { out.push('<ul>'); inSub = true }
+      out.push(`<li>${link}</li>`)
+    }
+  }
+  closeLi()
+
+  return (
+    `<nav class="toc" aria-label="Table of contents">\n` +
+    `<p class="toc-title">${title}</p>\n` +
+    `<ul>\n${out.join('\n')}\n</ul>\n</nav>\n`
+  )
+}
+
 /** Collect h2 and h3 headings (with their anchor ids) from a parsed token stream. */
 export function collectHeadings(tokens: Token[]): Heading[] {
   const headings: Heading[] = []
