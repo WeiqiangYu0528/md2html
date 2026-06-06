@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "description": "Render Markdown into a beautiful, self-contained HTML file.",
   "type": "module",
+  "license": "MIT",
+  "author": "Weiqiang Yu",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WeiqiangYu0528/md2html.git"
+  },
   "engines": {
     "node": ">=18.3.0"
   },
