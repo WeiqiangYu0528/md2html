@@ -1,5 +1,7 @@
 # md2html
 
+[English](README.md) · [简体中文](README.zh-CN.md)
+
 > Turn any Markdown file into a single, self-contained HTML page that's genuinely a pleasure to read.
 
 `md2html` is a small CLI that renders Markdown into **one** HTML file — CSS (and

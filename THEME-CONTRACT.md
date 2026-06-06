@@ -18,6 +18,14 @@ under `themes/<name>/` with `theme.json` + `theme.css`; no parser code changes.
 - Tables are wrapped: `<div class="table-wrap"><table>…</table></div>` (the wrapper enables horizontal scroll on narrow screens)
 - Blockquotes, lists, images, links, `<hr>`: plain semantic tags
 
+## Language
+
+The document shell carries `<html lang="…">`. The converter sets it from an explicit
+frontmatter `lang:` field, or — when absent — auto-detects Chinese vs English from the
+content (`zh` / `en`). Themes may key presentation off `:lang(...)` (the Claude theme uses
+`:lang(zh)` for CJK typography). The `lang` attribute is the stable hook; detection lives
+entirely in the converter.
+
 ## theme.json
 A theme manifest declares its name, description, the Shiki code theme, and any
 embeddable fonts (used only with `--embed-fonts`; an empty array means system fonts).
