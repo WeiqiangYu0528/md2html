@@ -69,4 +69,10 @@ describe('assembleDocument', () => {
     const html = assembleDocument({ title: 'T', bodyHtml: '<p>Body</p>', theme })
     expect(html).not.toContain('class="toc"')
   })
+
+  it('uses the theme scopeClass for the body class', () => {
+    const t = { ...theme, name: 'claude-dark', scopeClass: 'claude' }
+    const html = assembleDocument({ title: 'T', bodyHtml: '', theme: t })
+    expect(html).toContain('<body class="theme-claude">')
+  })
 })

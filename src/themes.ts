@@ -23,12 +23,25 @@ export function loadTheme(name: string): Theme {
     throw new Error(`Unknown theme "${name}". Available themes: ${listThemes().join(', ')}`)
   }
   const manifest = JSON.parse(readFileSync(join(dir, 'theme.json'), 'utf8'))
-  const css = readFileSync(join(dir, 'theme.css'), 'utf8')
+  const ownCss = readFileSync(join(dir, 'theme.css'), 'utf8')
   // A theme can either name a built-in Shiki theme (`shikiTheme`) or ship its
   // own custom theme JSON in the theme folder (`shikiThemeFile`).
   const shikiTheme = manifest.shikiThemeFile
     ? JSON.parse(readFileSync(join(dir, manifest.shikiThemeFile), 'utf8'))
     : manifest.shikiTheme
+
+  // Theme inheritance: a theme may `extends` a base, inheriting its CSS (prepended)
+  // and its body scope class so the base's structural rules apply. The child's CSS
+  // comes last, so its `:root` palette override wins. Other fields (code palette,
+  // mermaid, fonts) are the child's own.
+  let css = ownCss
+  let scopeClass = manifest.name as string
+  if (manifest.extends) {
+    const base = loadTheme(manifest.extends)
+    css = base.css + '\n' + ownCss
+    scopeClass = base.scopeClass ?? base.name
+  }
+
   return {
     name: manifest.name,
     description: manifest.description,
@@ -37,5 +50,6 @@ export function loadTheme(name: string): Theme {
     css,
     dir,
     mermaid: manifest.mermaid,
+    scopeClass,
   }
 }

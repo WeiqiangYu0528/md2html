@@ -32,7 +32,7 @@ export function assembleDocument(input: AssembleInput): string {
 ${fontFaceCss}${fontFaceCss ? '\n' : ''}${katexCss}${katexCss ? '\n' : ''}${theme.css}
 </style>
 </head>
-<body class="theme-${theme.name}">
+<body class="theme-${theme.scopeClass ?? theme.name}">
 <article class="md-content">
 ${header}${toc}${bodyHtml}
 </article>

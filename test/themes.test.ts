@@ -33,4 +33,8 @@ describe('themes', () => {
     expect(theme.mermaid).toBeTypeOf('object')
     expect((theme.mermaid as Record<string, unknown>).themeVariables).toBeTypeOf('object')
   })
+
+  it('sets scopeClass to the theme name for a base theme', () => {
+    expect(loadTheme('claude').scopeClass).toBe('claude')
+  })
 })
