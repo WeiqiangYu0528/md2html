@@ -10,15 +10,17 @@ export interface AssembleInput {
   fontFaceCss?: string
   /** Inlined KaTeX stylesheet (only when the document contains math). */
   katexCss?: string
+  /** Document language for the <html lang> attribute (default "en"). */
+  lang?: string
 }
 
 export function assembleDocument(input: AssembleInput): string {
-  const { title, bodyHtml, theme, headerTitle, fontFaceCss = '', katexCss = '' } = input
+  const { title, bodyHtml, theme, headerTitle, fontFaceCss = '', katexCss = '', lang = 'en' } = input
   const header = headerTitle
     ? `<header class="md-header"><h1>${escapeHtml(headerTitle)}</h1></header>\n`
     : ''
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${escapeHtml(lang)}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

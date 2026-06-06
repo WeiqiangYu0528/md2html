@@ -43,4 +43,14 @@ describe('assembleDocument', () => {
     const html = assembleDocument({ title: 'T', bodyHtml: '', theme })
     expect(html).not.toContain('.katex{color:red}')
   })
+
+  it('sets <html lang> from the lang input', () => {
+    const html = assembleDocument({ title: 'T', bodyHtml: '', theme, lang: 'zh' })
+    expect(html).toContain('<html lang="zh">')
+  })
+
+  it('defaults <html lang> to en when lang is omitted', () => {
+    const html = assembleDocument({ title: 'T', bodyHtml: '', theme })
+    expect(html).toContain('<html lang="en">')
+  })
 })

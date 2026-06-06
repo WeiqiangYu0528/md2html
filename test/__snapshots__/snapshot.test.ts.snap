@@ -31,7 +31,7 @@ body.theme-claude {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 18px/1.75 Georgia, 'Iowan Old Style', 'Tiempos Text', 'Times New Roman', serif;
+  font: 18px/1.75 Georgia, 'Iowan Old Style', 'Tiempos Text', 'Times New Roman', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'STSong', SimSun, serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -47,7 +47,7 @@ body.theme-claude {
 
 .theme-claude h1, .theme-claude h2, .theme-claude h3,
 .theme-claude h4, .theme-claude h5, .theme-claude h6 {
-  font-family: Georgia, 'Tiempos Headline', serif;
+  font-family: Georgia, 'Tiempos Headline', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'STSong', SimSun, serif;
   line-height: 1.25;
   color: #1a1915;
   letter-spacing: -0.01em;
@@ -256,6 +256,20 @@ body.theme-claude {
   overflow-x: auto;        /* wide equations scroll instead of overflowing the page */
   overflow-y: hidden;
   padding: 0.25rem 0;      /* room for the scrollbar without clipping glyphs */
+}
+
+/* Chinese / CJK typography. Applied only when the document language is Chinese
+   (the converter sets <html lang="zh"> from frontmatter or auto-detection). The
+   CJK serif fonts live in the global font stacks above; these rules tune the
+   reading experience for Chinese prose: justified text, a narrower measure
+   (~36 full-width chars/line), more leading, and correct line-breaking. */
+.theme-claude:lang(zh) { line-height: 1.85; line-break: strict; }
+.theme-claude:lang(zh) .md-content { max-width: 36em; }
+.theme-claude:lang(zh) p,
+.theme-claude:lang(zh) li { text-align: justify; }
+.theme-claude:lang(zh) h1, .theme-claude:lang(zh) h2, .theme-claude:lang(zh) h3,
+.theme-claude:lang(zh) h4, .theme-claude:lang(zh) h5, .theme-claude:lang(zh) h6 {
+  letter-spacing: normal;
 }
 
 </style>
