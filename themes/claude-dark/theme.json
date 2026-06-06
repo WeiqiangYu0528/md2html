@@ -1,0 +1,26 @@
+{
+  "name": "claude-dark",
+  "description": "Warm Serif Essay — dark.",
+  "extends": "claude",
+  "shikiThemeFile": "code-theme.json",
+  "fonts": [],
+  "mermaid": {
+    "theme": "base",
+    "themeVariables": {
+      "fontFamily": "Georgia, 'Iowan Old Style', serif",
+      "primaryColor": "#25221d",
+      "primaryTextColor": "#e6e1d6",
+      "primaryBorderColor": "#e0926d",
+      "secondaryColor": "#21251c",
+      "tertiaryColor": "#1b1916",
+      "lineColor": "#eba883",
+      "textColor": "#e6e1d6",
+      "mainBkg": "#25221d",
+      "nodeBorder": "#e0926d",
+      "clusterBkg": "#1f1c18",
+      "clusterBorder": "#38332c",
+      "noteBkgColor": "#2a2417",
+      "noteTextColor": "#e6e1d6"
+    }
+  }
+}
