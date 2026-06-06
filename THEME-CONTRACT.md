@@ -17,6 +17,7 @@ under `themes/<name>/` with `theme.json` + `theme.css`; no parser code changes.
 - Footnotes: a trailing `<section class="footnotes">`
 - Tables are wrapped: `<div class="table-wrap"><table>…</table></div>` (the wrapper enables horizontal scroll on narrow screens)
 - Table of contents (when generated): `<nav class="toc" aria-label="Table of contents">` containing a `<p class="toc-title">` and a nested `<ul>` of `<a href="#slug">` links. Emitted by the converter after the header (auto when the doc has 3+ h2/h3 headings, or via frontmatter `toc: true`/`toc: false`); the theme styles it and may reposition it (the Claude theme makes it a sticky side-rail on wide screens). The title is localized (`Contents` / `目录`).
+- Diagrams (Mermaid): a rendered diagram is `<figure class="mermaid">` containing inline `<svg>`; when rendering isn't possible (no browser / invalid syntax) it degrades to `<figure class="mermaid-fallback">` wrapping the source. Diagram colors come from the theme manifest's optional `mermaid` config (a Mermaid init object with `theme`/`themeVariables`), the way the code palette comes from `shikiThemeFile` — the converter only plumbs it.
 - Blockquotes, lists, images, links, `<hr>`: plain semantic tags
 
 ## Language
@@ -38,3 +39,6 @@ The code theme is given **one of two ways**:
 - `shikiThemeFile`: a path (relative to the theme directory) to a custom Shiki/TextMate
   theme JSON the theme ships itself. This lets a theme own its syntax palette so code
   blocks stay native to the theme. The Claude theme uses `"shikiThemeFile": "code-theme.json"`.
+
+A theme may also declare an optional `mermaid` object (a Mermaid init config:
+`theme`/`themeVariables`) so diagrams match the theme's palette.

@@ -15,4 +15,6 @@ export interface Theme {
   css: string
   fonts: FontFace[]
   dir: string // absolute path to the theme directory
+  /** Optional Mermaid init config (theme/themeVariables) for diagram colors. */
+  mermaid?: Record<string, unknown>
 }

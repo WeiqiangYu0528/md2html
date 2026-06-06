@@ -36,5 +36,6 @@ export function loadTheme(name: string): Theme {
     fonts: manifest.fonts ?? [],
     css,
     dir,
+    mermaid: manifest.mermaid,
   }
 }

@@ -1,6 +1,7 @@
 import { parseFrontmatter } from './frontmatter'
 import { detectLang } from './lang'
 import { createRenderer } from './markdown/renderer'
+import { renderMermaid, mermaidFallbackHtml } from './mermaid/render'
 import { buildToc } from './toc'
 import type { ShikiTheme } from './types'
 
@@ -20,13 +21,31 @@ export interface ConvertResult {
  * @param raw the full Markdown file contents (may include frontmatter)
  * @param shikiTheme a built-in Shiki theme name, or a parsed custom theme object
  */
-export async function convert(raw: string, shikiTheme: ShikiTheme): Promise<ConvertResult> {
+export async function convert(
+  raw: string,
+  shikiTheme: ShikiTheme,
+  mermaidConfig: Record<string, unknown> = {},
+): Promise<ConvertResult> {
   const { metadata, content } = parseFrontmatter(raw)
   const md = await createRenderer(shikiTheme)
   // Parse once, then render the body AND read the heading tokens for the TOC.
   // A shared env preserves footnote/anchor behavior (md.render does the same).
   const env: Record<string, unknown> = {}
   const tokens = md.parse(content, env)
+  // Collect ```mermaid sources (in document order) and render them to SVG before
+  // the synchronous render pass. Only launches a browser when diagrams exist.
+  const mermaidSources = tokens
+    .filter((t) => t.type === 'fence' && t.info.trim() === 'mermaid')
+    .map((t) => t.content)
+  if (mermaidSources.length > 0) {
+    try {
+      env.mermaid = await renderMermaid(mermaidSources, mermaidConfig)
+    } catch {
+      // Browser unavailable — fall back to source blocks for every diagram.
+      env.mermaid = mermaidSources.map((s) => mermaidFallbackHtml(s))
+    }
+    env.mermaidIndex = 0
+  }
   const bodyHtml = md.renderer.render(tokens, md.options, env)
   // texmath wraps inline math in <eq> and display math in <eqn>; these tags are
   // emitted only for real math (never for $…$ inside code), so they are a

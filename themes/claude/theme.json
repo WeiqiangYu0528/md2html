@@ -2,5 +2,24 @@
   "name": "claude",
   "description": "Warm serif essay theme inspired by the Anthropic aesthetic.",
   "shikiThemeFile": "code-theme.json",
-  "fonts": []
+  "fonts": [],
+  "mermaid": {
+    "theme": "base",
+    "themeVariables": {
+      "fontFamily": "Georgia, 'Iowan Old Style', serif",
+      "primaryColor": "#f3ede1",
+      "primaryTextColor": "#2b2a26",
+      "primaryBorderColor": "#cc785c",
+      "secondaryColor": "#eef1e4",
+      "tertiaryColor": "#faf9f5",
+      "lineColor": "#a64f34",
+      "textColor": "#2b2a26",
+      "mainBkg": "#f3ede1",
+      "nodeBorder": "#cc785c",
+      "clusterBkg": "#faf9f5",
+      "clusterBorder": "#e7e0d2",
+      "noteBkgColor": "#f7efda",
+      "noteTextColor": "#2b2a26"
+    }
+  }
 }

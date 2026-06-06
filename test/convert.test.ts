@@ -1,5 +1,15 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { convert } from '../src/convert'
+
+vi.mock('../src/mermaid/render', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../src/mermaid/render')>()
+  return {
+    ...actual,
+    renderMermaid: vi.fn(async (sources: string[]) =>
+      sources.map((_s, i) => `<figure class="mermaid"><svg>MOCK${i}</svg></figure>`),
+    ),
+  }
+})
 
 describe('convert', () => {
   it('combines frontmatter parsing and rendering', async () => {
@@ -55,5 +65,35 @@ describe('convert', () => {
   it('honors frontmatter toc:false', async () => {
     const { toc } = await convert('---\ntoc: false\n---\n## A\n\n## B\n\n## C', 'vitesse-dark')
     expect(toc).toBe('')
+  })
+})
+
+describe('convert mermaid diagrams', () => {
+  const md = '# T\n\n```mermaid\ngraph TD; A-->B;\n```\n\n```mermaid\nsequenceDiagram\n  A->>B: hi\n```'
+
+  it('renders each mermaid block to a figure (in order)', async () => {
+    const { bodyHtml } = await convert(md, 'vitesse-dark')
+    expect(bodyHtml).toContain('<figure class="mermaid"><svg>MOCK0</svg></figure>')
+    expect(bodyHtml).toContain('<figure class="mermaid"><svg>MOCK1</svg></figure>')
+  })
+
+  it('passes the mermaid config through to the renderer', async () => {
+    const mod = await import('../src/mermaid/render')
+    await convert('```mermaid\ngraph TD; A-->B;\n```', 'vitesse-dark', { theme: 'base' })
+    expect(mod.renderMermaid).toHaveBeenCalledWith(expect.any(Array), { theme: 'base' })
+  })
+
+  it('falls back for every diagram when the renderer throws (no browser)', async () => {
+    const mod = await import('../src/mermaid/render')
+    ;(mod.renderMermaid as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('no browser'))
+    const { bodyHtml } = await convert('```mermaid\ngraph TD; A-->B;\n```', 'vitesse-dark')
+    expect(bodyHtml).toContain('class="mermaid-fallback"')
+  })
+
+  it('does not invoke the renderer when there are no diagrams', async () => {
+    const mod = await import('../src/mermaid/render')
+    ;(mod.renderMermaid as ReturnType<typeof vi.fn>).mockClear()
+    await convert('# Just text\n\nNo diagrams here.', 'vitesse-dark')
+    expect(mod.renderMermaid).not.toHaveBeenCalled()
   })
 })
