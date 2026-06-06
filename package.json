@@ -29,10 +29,12 @@
     "@mdit/plugin-alert": "^0.23.2",
     "@shikijs/markdown-it": "^4.2.0",
     "gray-matter": "^4.0.3",
+    "katex": "^0.17.0",
     "markdown-it": "^14.2.0",
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-task-lists": "^2.1.1",
+    "markdown-it-texmath": "^1.0.0",
     "shiki": "^4.2.0"
   },
   "devDependencies": {

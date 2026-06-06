@@ -4,6 +4,8 @@ import footnote from 'markdown-it-footnote'
 import taskLists from 'markdown-it-task-lists'
 import Shiki from '@shikijs/markdown-it'
 import { alert } from '@mdit/plugin-alert'
+import texmath from 'markdown-it-texmath'
+import katex from 'katex'
 import { calloutOptions } from './callouts'
 import type { ShikiTheme } from '../types'
 
@@ -28,6 +30,14 @@ export async function createRenderer(shikiTheme: ShikiTheme): Promise<MarkdownIt
   md.use(footnote)
   md.use(taskLists)
   md.use(alert, calloutOptions)
+  // Math: texmath handles delimiters, KaTeX renders to static HTML at build time.
+  // 'dollars' → $…$ and $$…$$; 'brackets' → \(…\) and \[…\]. throwOnError:false
+  // means a malformed formula renders flagged instead of crashing conversion.
+  md.use(texmath, {
+    engine: katex,
+    delimiters: ['dollars', 'brackets'],
+    katexOptions: { throwOnError: false },
+  })
   // Shiki accepts either a theme name or a raw theme object.
   md.use(await Shiki({ theme: shikiTheme as never }))
 
