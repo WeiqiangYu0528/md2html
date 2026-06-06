@@ -257,6 +257,9 @@ body.theme-claude {
 .theme-claude:lang(zh) .md-content { max-width: 36em; }
 .theme-claude:lang(zh) p,
 .theme-claude:lang(zh) li { text-align: justify; }
+/* Chinese has no italic tradition; the Latin blockquote italic renders as a
+   synthetic slant on CJK, so keep Chinese blockquotes upright. */
+.theme-claude:lang(zh) blockquote { font-style: normal; }
 .theme-claude:lang(zh) h1, .theme-claude:lang(zh) h2, .theme-claude:lang(zh) h3,
 .theme-claude:lang(zh) h4, .theme-claude:lang(zh) h5, .theme-claude:lang(zh) h6 {
   letter-spacing: normal;
