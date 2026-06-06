@@ -310,3 +310,33 @@ html { scroll-behavior: smooth; }
     font-size: 0.85rem;
   }
 }
+
+/* Diagrams (Mermaid). The converter emits <figure class="mermaid"> with inline
+   SVG (colors come from the theme's mermaid manifest config), or a
+   <figure class="mermaid-fallback"> source block when rendering isn't possible. */
+.theme-claude figure.mermaid,
+.theme-claude figure.mermaid-fallback {
+  margin: 1.8rem 0;
+  text-align: center;
+  overflow-x: auto;
+}
+.theme-claude figure.mermaid svg { max-width: 100%; height: auto; }
+.theme-claude figure.mermaid-fallback {
+  text-align: left;
+}
+.theme-claude figure.mermaid-fallback pre {
+  margin: 0;
+  padding: 1.15rem 1.35rem;
+  border-radius: 10px;
+  border: 1px dashed var(--rule);
+  background: var(--tint);
+  overflow-x: auto;
+  font-size: 0.84rem;
+}
+.theme-claude figure.mermaid-fallback::after {
+  content: "Diagram not rendered — showing source.";
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
