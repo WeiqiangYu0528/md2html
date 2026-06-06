@@ -8,10 +8,12 @@ export interface AssembleInput {
   headerTitle?: string
   /** Inlined @font-face declarations (from --embed-fonts). */
   fontFaceCss?: string
+  /** Inlined KaTeX stylesheet (only when the document contains math). */
+  katexCss?: string
 }
 
 export function assembleDocument(input: AssembleInput): string {
-  const { title, bodyHtml, theme, headerTitle, fontFaceCss = '' } = input
+  const { title, bodyHtml, theme, headerTitle, fontFaceCss = '', katexCss = '' } = input
   const header = headerTitle
     ? `<header class="md-header"><h1>${escapeHtml(headerTitle)}</h1></header>\n`
     : ''
@@ -22,7 +24,7 @@ export function assembleDocument(input: AssembleInput): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(title)}</title>
 <style>
-${fontFaceCss}${fontFaceCss ? '\n' : ''}${theme.css}
+${fontFaceCss}${fontFaceCss ? '\n' : ''}${katexCss}${katexCss ? '\n' : ''}${theme.css}
 </style>
 </head>
 <body class="theme-${theme.name}">

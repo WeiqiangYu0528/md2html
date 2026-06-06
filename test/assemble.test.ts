@@ -31,4 +31,16 @@ describe('assembleDocument', () => {
     const html = assembleDocument({ title: 'T', bodyHtml: '', theme, fontFaceCss: '@font-face{}' })
     expect(html).toContain('@font-face{}')
   })
+
+  it('inlines KaTeX CSS before theme CSS when provided', () => {
+    const html = assembleDocument({ title: 'T', bodyHtml: '', theme, katexCss: '.katex{color:red}' })
+    expect(html).toContain('.katex{color:red}')
+    // KaTeX CSS must come before theme CSS so the theme can override it.
+    expect(html.indexOf('.katex{color:red}')).toBeLessThan(html.indexOf('.theme-claude .md-content'))
+  })
+
+  it('omits KaTeX CSS when not provided', () => {
+    const html = assembleDocument({ title: 'T', bodyHtml: '', theme })
+    expect(html).not.toContain('.katex{color:red}')
+  })
 })
