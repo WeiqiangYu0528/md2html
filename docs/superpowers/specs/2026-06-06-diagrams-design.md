@@ -126,13 +126,27 @@ without global state.
 - Bundling a browser (we rely on an already-available/optional one)
 - Non-Mermaid diagram languages (PlantUML, Graphviz, etc.)
 
-## Feasibility note
+## Feasibility note (probed — CONFIRMED)
 
-This is the heaviest feature in the roadmap: it depends on a headless browser, and one test
-needs Chromium. If installing/launching the browser fails in the target environment, the
-graceful-degradation path still yields working conversions (source fallback), and the gated
-smoke test self-skips — but full diagram rendering won't be exercisable there. This will be
-confirmed early in implementation.
+A pre-implementation probe verified the full pipeline works in the target environment:
+headless Chromium launches (~2s cold), the official **Mermaid 11.15.0** UMD bundle
+(`dist/mermaid.min.js`) loads via the page, and `graph TD; A[Start]-->B-->C;` rendered to a
+valid ~12 KB `<svg>` (~0.4s). `getBBox` text measurement — which Mermaid depends on — works.
+
+Concrete implementation findings from the probe:
+
+- **Browser resolution needs care.** The environment had only Chromium build **1208** cached;
+  a newer Playwright expected build 1224 and failed. The renderer must not assume a default
+  browser is present — it should locate one robustly: prefer a pinned `playwright` whose
+  browser is installed (or run `npx playwright install chromium`), and allow an
+  `executablePath` override (e.g. the cached `chrome-headless-shell`). The graceful-degradation
+  path (source fallback) covers the case where no browser can be launched, so conversions never
+  break regardless.
+- **Mermaid is loaded from the installed package's dist** (`mermaid` → `dist/mermaid.min.js`),
+  resolved the same way KaTeX's CSS is (`require.resolve('mermaid/package.json')` → `dist`).
+  `mermaid` is added as a (regular) dependency; the heavy part is the browser, kept optional.
+- **Cost:** ~2s cold browser launch + ~0.4s per diagram — acceptable for a build-time CLI; the
+  browser is launched once per conversion and only when diagrams are present.
 
 ## Forward compatibility
 
