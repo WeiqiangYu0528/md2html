@@ -13,4 +13,19 @@ describe('convert', () => {
     expect(metadata).toEqual({})
     expect(bodyHtml).toContain('<strong>text</strong>')
   })
+
+  it('reports hasMath=true when the document contains math', async () => {
+    const { hasMath } = await convert('Euler: $e^{i\\pi}+1=0$.', 'vitesse-dark')
+    expect(hasMath).toBe(true)
+  })
+
+  it('reports hasMath=false when there is no math', async () => {
+    const { hasMath } = await convert('Just **prose**, no math.', 'vitesse-dark')
+    expect(hasMath).toBe(false)
+  })
+
+  it('reports hasMath=false when "math" only appears inside code', async () => {
+    const { hasMath } = await convert('Inline `$x$` and a fence:\n\n```\n$y$\n```', 'vitesse-dark')
+    expect(hasMath).toBe(false)
+  })
 })
