@@ -8,6 +8,7 @@ import texmath from 'markdown-it-texmath'
 import katex from 'katex'
 import { calloutOptions } from './callouts'
 import type { ShikiTheme } from '../types'
+import { mermaidFallbackHtml } from '../mermaid/render'
 
 function slugify(text: string): string {
   return text
@@ -40,6 +41,20 @@ export async function createRenderer(shikiTheme: ShikiTheme): Promise<MarkdownIt
   })
   // Shiki accepts either a theme name or a raw theme object.
   md.use(await Shiki({ theme: shikiTheme as never }))
+
+  // Intercept ```mermaid fences: emit the pre-rendered diagram stashed in env by
+  // convert(); everything else goes to Shiki. Keeps async diagram rendering out
+  // of the synchronous render pass.
+  const shikiFence = md.renderer.rules.fence!
+  md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+    if (tokens[idx].info.trim() === 'mermaid') {
+      const e = env as { mermaid?: string[]; mermaidIndex?: number }
+      const i = e.mermaidIndex ?? 0
+      e.mermaidIndex = i + 1
+      return e.mermaid?.[i] ?? mermaidFallbackHtml(tokens[idx].content)
+    }
+    return shikiFence(tokens, idx, options, env, self)
+  }
 
   md.renderer.rules.table_open = () => '<div class="table-wrap">\n<table>\n'
   md.renderer.rules.table_close = () => '</table>\n</div>\n'
