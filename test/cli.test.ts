@@ -57,4 +57,16 @@ describe('cli run()', () => {
     const plainHtml = readFileSync(plainIn.replace(/\.md$/, '.html'), 'utf8')
     expect(plainHtml).not.toContain('data:font/woff2;base64,')
   })
+
+  it('sets <html lang="zh"> for a Chinese document and en for English', async () => {
+    const zhIn = tmpFile('zh.md', '# 标题\n\n这是一篇用于测试的中文文档，内容足够多以触发语言检测。')
+    expect(await run([zhIn])).toBe(0)
+    const zhHtml = readFileSync(zhIn.replace(/\.md$/, '.html'), 'utf8')
+    expect(zhHtml).toContain('<html lang="zh">')
+
+    const enIn = tmpFile('en.md', '# Title\n\nThis is an ordinary English document.')
+    expect(await run([enIn])).toBe(0)
+    const enHtml = readFileSync(enIn.replace(/\.md$/, '.html'), 'utf8')
+    expect(enHtml).toContain('<html lang="en">')
+  })
 })
