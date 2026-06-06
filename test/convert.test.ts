@@ -28,4 +28,16 @@ describe('convert', () => {
     const { hasMath } = await convert('Inline `$x$` and a fence:\n\n```\n$y$\n```', 'vitesse-dark')
     expect(hasMath).toBe(false)
   })
+
+  it('reports the detected language', async () => {
+    const zh = await convert('这是一篇中文文档，用于测试语言检测。', 'vitesse-dark')
+    expect(zh.lang).toBe('zh')
+    const en = await convert('A plain English document.', 'vitesse-dark')
+    expect(en.lang).toBe('en')
+  })
+
+  it('honors an explicit frontmatter lang', async () => {
+    const { lang } = await convert('---\nlang: zh\n---\nMostly English body.', 'vitesse-dark')
+    expect(lang).toBe('zh')
+  })
 })

@@ -1,4 +1,5 @@
 import { parseFrontmatter } from './frontmatter'
+import { detectLang } from './lang'
 import { createRenderer } from './markdown/renderer'
 import type { ShikiTheme } from './types'
 
@@ -7,6 +8,8 @@ export interface ConvertResult {
   bodyHtml: string
   /** True when the rendered body contains math (texmath wrappers present). */
   hasMath: boolean
+  /** Document language for <html lang> (frontmatter lang, else auto-detected). */
+  lang: string
 }
 
 /**
@@ -22,5 +25,6 @@ export async function convert(raw: string, shikiTheme: ShikiTheme): Promise<Conv
   // emitted only for real math (never for $…$ inside code), so they are a
   // reliable, cheap signal that the KaTeX stylesheet needs to be inlined.
   const hasMath = bodyHtml.includes('<eq>') || bodyHtml.includes('<eqn>')
-  return { metadata, bodyHtml, hasMath }
+  const lang = detectLang(content, metadata)
+  return { metadata, bodyHtml, hasMath, lang }
 }
