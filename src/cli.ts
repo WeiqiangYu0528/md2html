@@ -70,7 +70,7 @@ export async function run(argv: string[]): Promise<number> {
     return 1
   }
 
-  const { metadata, bodyHtml, hasMath, lang } = await convert(raw, theme.shikiTheme)
+  const { metadata, bodyHtml, hasMath, lang, toc } = await convert(raw, theme.shikiTheme)
   const fmTitle = typeof metadata.title === 'string' ? metadata.title : undefined
   const title = fmTitle ?? basename(inputPath, extname(inputPath))
 
@@ -88,7 +88,7 @@ export async function run(argv: string[]): Promise<number> {
   // --embed-fonts (which governs the theme's text fonts).
   const katexCss = hasMath ? buildKatexCss() : ''
 
-  const html = assembleDocument({ title, headerTitle: fmTitle, bodyHtml, theme, fontFaceCss, katexCss, lang })
+  const html = assembleDocument({ title, headerTitle: fmTitle, bodyHtml, theme, fontFaceCss, katexCss, lang, toc })
 
   const outputPath = (values.output as string) ?? resolve(inputPath.replace(/\.md$/i, '') + '.html')
   try {

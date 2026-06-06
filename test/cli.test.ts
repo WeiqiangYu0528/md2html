@@ -69,4 +69,16 @@ describe('cli run()', () => {
     const enHtml = readFileSync(enIn.replace(/\.md$/, '.html'), 'utf8')
     expect(enHtml).toContain('<html lang="en">')
   })
+
+  it('includes a TOC for a multi-heading document and omits it for a short one', async () => {
+    const longIn = tmpFile('toc.md', '# Doc\n\n## Alpha\n\n## Beta\n\n## Gamma\n\ntext')
+    expect(await run([longIn])).toBe(0)
+    const longHtml = readFileSync(longIn.replace(/\.md$/, '.html'), 'utf8')
+    expect(longHtml).toContain('<nav class="toc"')
+
+    const shortIn = tmpFile('short.md', '# Doc\n\n## Only one\n\ntext')
+    expect(await run([shortIn])).toBe(0)
+    const shortHtml = readFileSync(shortIn.replace(/\.md$/, '.html'), 'utf8')
+    expect(shortHtml).not.toContain('<nav class="toc"')
+  })
 })
