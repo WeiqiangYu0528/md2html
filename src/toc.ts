@@ -1,4 +1,5 @@
 import type Token from 'markdown-it/lib/token.mjs'
+import { escapeHtml } from './escape'
 
 export interface Heading {
   level: number
@@ -16,14 +17,6 @@ function headingText(inline: Token): string {
 }
 
 const TOC_TITLES: Record<string, string> = { zh: '目录' }
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
 
 /**
  * Render a nested TOC nav from h2/h3 headings. h3s nest under the preceding h2;

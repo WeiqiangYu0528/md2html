@@ -1,4 +1,5 @@
 import type { Theme } from './types'
+import { escapeHtml } from './escape'
 
 export interface AssembleInput {
   title: string
@@ -38,12 +39,4 @@ ${header}${toc}${bodyHtml}
 </body>
 </html>
 `
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
 }

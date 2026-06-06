@@ -1,13 +1,6 @@
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
+import { escapeHtml } from '../escape'
 
 /**
  * Fallback HTML for a diagram that could not be rendered (no browser, or invalid
