@@ -27,4 +27,10 @@ describe('themes', () => {
   it('throws a helpful error for unknown themes', () => {
     expect(() => loadTheme('nope')).toThrow(/Unknown theme "nope"/)
   })
+
+  it('loads the claude theme mermaid config from the manifest', () => {
+    const theme = loadTheme('claude')
+    expect(theme.mermaid).toBeTypeOf('object')
+    expect((theme.mermaid as Record<string, unknown>).themeVariables).toBeTypeOf('object')
+  })
 })

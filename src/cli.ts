@@ -70,7 +70,7 @@ export async function run(argv: string[]): Promise<number> {
     return 1
   }
 
-  const { metadata, bodyHtml, hasMath, lang, toc } = await convert(raw, theme.shikiTheme)
+  const { metadata, bodyHtml, hasMath, lang, toc } = await convert(raw, theme.shikiTheme, theme.mermaid ?? {})
   const fmTitle = typeof metadata.title === 'string' ? metadata.title : undefined
   const title = fmTitle ?? basename(inputPath, extname(inputPath))
 
