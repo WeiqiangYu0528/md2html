@@ -43,6 +43,13 @@ describe('themes', () => {
     expect(css).toContain('text-overflow: ellipsis;')
   })
 
+  it('treats hr before h2 as section spacing instead of a second visible rule', () => {
+    const css = loadTheme('claude').css
+    expect(css).toContain('.theme-claude hr:has(+ h2) {')
+    expect(css).toContain('border-top-color: transparent;')
+    expect(css).toContain('.theme-claude hr + h2 {')
+  })
+
   it('sets scopeClass to the theme name for a base theme', () => {
     expect(loadTheme('claude').scopeClass).toBe('claude')
   })

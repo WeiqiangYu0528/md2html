@@ -246,6 +246,11 @@ body.theme-claude {
 
 .theme-claude img { max-width: 100%; height: auto; border-radius: 8px; }
 .theme-claude hr { border: none; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+.theme-claude hr:has(+ h2) {
+  border-top-color: transparent;
+  margin: 3rem 0 0.35rem;
+}
+.theme-claude hr + h2 { margin-top: 0; }
 
 .theme-claude .footnote-ref a {
   font-size: 0.82em;
