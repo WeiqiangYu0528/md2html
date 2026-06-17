@@ -34,6 +34,15 @@ describe('themes', () => {
     expect((theme.mermaid as Record<string, unknown>).themeVariables).toBeTypeOf('object')
   })
 
+  it('truncates only wide-screen TOC side-rail links with one-line ellipsis', () => {
+    const css = loadTheme('claude').css
+    expect(css).toContain('@media (min-width: 1200px)')
+    expect(css).toContain('@media (min-width: 1200px) {\n  .theme-claude .toc {')
+    expect(css).toContain('white-space: nowrap;')
+    expect(css).toContain('overflow: hidden;')
+    expect(css).toContain('text-overflow: ellipsis;')
+  })
+
   it('sets scopeClass to the theme name for a base theme', () => {
     expect(loadTheme('claude').scopeClass).toBe('claude')
   })

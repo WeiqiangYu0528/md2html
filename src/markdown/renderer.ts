@@ -14,7 +14,7 @@ function slugify(text: string): string {
   return text
     .trim()
     .toLowerCase()
-    .replace(/[^\w\s-]/g, '')   // drop punctuation/symbols
+    .replace(/[^\p{L}\p{N}_\s-]/gu, '')  // drop punctuation/symbols, keep letters/numbers in any script (incl. CJK)
     .replace(/\s+/g, '-')        // spaces → hyphens
     .replace(/-+/g, '-')         // collapse repeats
     .replace(/^-+|-+$/g, '')     // trim leading/trailing hyphens

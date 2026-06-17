@@ -306,15 +306,15 @@ html { scroll-behavior: smooth; }
    side-rail pulled into the left gutter. Zero JS. */
 .theme-claude .toc {
   margin: 0 0 2.5rem;
-  padding: 1rem 1.3rem;
+  padding: 1.1rem 1.4rem;
   border: 1px solid var(--rule);
   border-radius: 10px;
   background: var(--tint);
-  font-size: 0.92rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 .theme-claude .toc-title {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.8rem;
   font-family: Georgia, 'Tiempos Headline', serif;
   font-weight: 700;
   font-size: 0.78rem;
@@ -323,22 +323,51 @@ html { scroll-behavior: smooth; }
   color: var(--muted);
 }
 .theme-claude .toc ul { list-style: none; margin: 0; padding-left: 0; }
-.theme-claude .toc ul ul { padding-left: 1rem; margin: 0.2rem 0; }
-.theme-claude .toc li { margin: 0.3rem 0; }
-.theme-claude .toc a { color: var(--muted); text-decoration: none; }
-.theme-claude .toc a:hover { color: var(--accent-strong); text-decoration: underline; }
+/* Sub-items (h3) sit under a quiet guide line so each section reads as a group. */
+.theme-claude .toc ul ul {
+  margin: 0.45rem 0 0.1rem;
+  padding-left: 0.9em;
+  border-left: 1px solid var(--rule);
+}
+.theme-claude .toc li { margin: 0.55rem 0; }
+.theme-claude .toc ul ul li { margin: 0.4rem 0; }
+/* Hanging indent: when a long CJK entry wraps, the continuation lines align
+   under the title instead of resetting to the margin — so each entry reads as
+   one block and adjacent items don't blur together. */
+.theme-claude .toc a {
+  display: block;
+  padding-left: 1.15em;
+  text-indent: -1.15em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.theme-claude .toc ul ul a { font-size: 0.95em; }
+.theme-claude .toc a:hover { color: var(--accent-strong); }
 
 @media (min-width: 1200px) {
   .theme-claude .toc {
     float: left;
     position: sticky;
     top: 2rem;
-    width: 200px;
-    margin-left: -244px;   /* pull into the left gutter, beside the centered column */
-    padding: 0;
+    width: 220px;
+    margin-left: -264px;   /* width + gutter gap; pull beside the centered column */
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;      /* a long TOC scrolls within the rail instead of clipping */
+    padding: 0.1rem 0 0.1rem 1rem;
     border: none;
+    border-left: 1px solid var(--rule);  /* a quiet spine gives the side-rail structure */
+    border-radius: 0;
     background: none;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+  .theme-claude .toc li { margin: 0.65rem 0; }
+  .theme-claude .toc ul ul li { margin: 0.5rem 0; }
+  .theme-claude .toc a {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

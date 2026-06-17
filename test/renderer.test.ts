@@ -42,4 +42,13 @@ describe('createRenderer', () => {
     expect(md.render('# Reading Markdown, Beautifully')).toContain('id="reading-markdown-beautifully"')
     expect(md.render('## Hello, World! & Friends')).toContain('id="hello-world-friends"')
   })
+
+  it('produces non-empty, unique slugs for CJK headings', () => {
+    expect(md.render('## 这是什么项目')).toContain('id="这是什么项目"')
+    // Two distinct all-Chinese headings must not collapse to empty/colliding ids.
+    const html = md.render('## 云 + 地区维度（决定）\n\n## 作业维度（资源）')
+    expect(html).not.toContain('id=""')
+    expect(html).toContain('id="云-地区维度决定"')
+    expect(html).toContain('id="作业维度资源"')
+  })
 })
