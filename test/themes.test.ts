@@ -68,4 +68,33 @@ describe('themes', () => {
     expect(theme.shikiTheme).toBeTypeOf('object')             // own dark code palette
     expect(theme.mermaid).toBeTypeOf('object')                // own dark mermaid config
   })
+
+  it('lists gpt', () => {
+    expect(listThemes()).toContain('gpt')
+  })
+
+  it('loads gpt as a standalone theme with own CSS, code palette, and Mermaid config', () => {
+    const theme = loadTheme('gpt')
+    expect(theme.name).toBe('gpt')
+    expect(theme.scopeClass).toBe('gpt')
+    expect(theme.fonts).toEqual([])
+    expect(theme.css).toContain('.theme-gpt .md-content')
+    expect(theme.css).toContain('--bg: #ffffff')
+    expect(theme.css).not.toContain('.theme-claude .md-content')
+    expect(theme.shikiTheme).toBeTypeOf('object')
+    const custom = theme.shikiTheme as Record<string, unknown>
+    expect(custom.colors).toBeTypeOf('object')
+    expect(Array.isArray(custom.tokenColors)).toBe(true)
+    expect(theme.mermaid).toBeTypeOf('object')
+    expect((theme.mermaid as Record<string, unknown>).themeVariables).toBeTypeOf('object')
+  })
+
+  it('truncates only gpt wide-screen TOC side-rail links with one-line ellipsis', () => {
+    const css = loadTheme('gpt').css
+    expect(css).toContain('@media (min-width: 1200px)')
+    expect(css).toContain('@media (min-width: 1200px) {\n  .theme-gpt .toc {')
+    expect(css).toContain('white-space: nowrap;')
+    expect(css).toContain('overflow: hidden;')
+    expect(css).toContain('text-overflow: ellipsis;')
+  })
 })

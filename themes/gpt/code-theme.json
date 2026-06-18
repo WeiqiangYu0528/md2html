@@ -1,0 +1,22 @@
+{
+  "name": "gpt-code",
+  "type": "light",
+  "colors": {
+    "editor.background": "#f7f7f7",
+    "editor.foreground": "#242424"
+  },
+  "tokenColors": [
+    { "scope": ["comment", "punctuation.definition.comment", "string.comment"], "settings": { "foreground": "#8a8a8a", "fontStyle": "italic" } },
+    { "scope": ["keyword", "storage.type", "storage.modifier", "keyword.control", "keyword.control.import", "keyword.control.from", "keyword.operator.new", "keyword.operator.expression"], "settings": { "foreground": "#7c3aed" } },
+    { "scope": ["string", "string.quoted", "string.template", "punctuation.definition.string"], "settings": { "foreground": "#0f766e" } },
+    { "scope": ["constant.numeric", "constant.language", "constant.language.boolean", "constant.other"], "settings": { "foreground": "#b45309" } },
+    { "scope": ["entity.name.function", "support.function", "meta.function-call.generic", "variable.function"], "settings": { "foreground": "#2563eb" } },
+    { "scope": ["entity.name.type", "entity.name.class", "support.type", "support.class", "storage.type.class"], "settings": { "foreground": "#9333ea" } },
+    { "scope": ["variable", "variable.other", "variable.other.readwrite", "meta.definition.variable"], "settings": { "foreground": "#242424" } },
+    { "scope": ["variable.parameter", "meta.parameter"], "settings": { "foreground": "#525252" } },
+    { "scope": ["variable.other.property", "support.variable.property", "meta.object-literal.key"], "settings": { "foreground": "#0369a1" } },
+    { "scope": ["keyword.operator", "punctuation", "meta.brace", "punctuation.separator", "punctuation.terminator"], "settings": { "foreground": "#737373" } },
+    { "scope": ["entity.name.tag", "punctuation.definition.tag"], "settings": { "foreground": "#be123c" } },
+    { "scope": ["entity.other.attribute-name"], "settings": { "foreground": "#7c2d12" } }
+  ]
+}
