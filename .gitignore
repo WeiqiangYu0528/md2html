@@ -6,6 +6,7 @@ dist/
 # Visual-companion brainstorm scratch (superpowers)
 .superpowers/
 samples/*.html
+.worktrees/
 
 # Local secrets — never commit
 secret
