@@ -65,6 +65,15 @@ describe('assembleDocument', () => {
     expect(html.indexOf('<nav class="toc">')).toBeLessThan(html.indexOf('<p>Body</p>'))
   })
 
+  it('injects the TOC after a leading markdown h1 when no header is provided', () => {
+    const html = assembleDocument({
+      title: 'T', bodyHtml: '<h1 id="doc">Doc</h1>\n<p>Body</p>', theme,
+      toc: '<nav class="toc">TOC</nav>',
+    })
+    expect(html.indexOf('<h1 id="doc">Doc</h1>')).toBeLessThan(html.indexOf('<nav class="toc">'))
+    expect(html.indexOf('<nav class="toc">')).toBeLessThan(html.indexOf('<p>Body</p>'))
+  })
+
   it('omits the TOC when not provided', () => {
     const html = assembleDocument({ title: 'T', bodyHtml: '<p>Body</p>', theme })
     expect(html).not.toContain('class="toc"')

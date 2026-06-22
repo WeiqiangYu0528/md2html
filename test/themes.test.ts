@@ -34,10 +34,17 @@ describe('themes', () => {
     expect((theme.mermaid as Record<string, unknown>).themeVariables).toBeTypeOf('object')
   })
 
-  it('truncates only wide-screen TOC side-rail links with one-line ellipsis', () => {
+  it('uses a wide concise desktop gutter before truncating claude TOC side-rail links', () => {
     const css = loadTheme('claude').css
-    expect(css).toContain('@media (min-width: 1200px)')
-    expect(css).toContain('@media (min-width: 1200px) {\n  .theme-claude .toc {')
+    expect(css).toContain('@media (min-width: 1400px)')
+    expect(css).toContain('@media (min-width: 1400px) {\n  .theme-claude .toc {')
+    expect(css).toContain('width: 220px;')
+    expect(css).toContain('margin-left: -340px;')
+    expect(css).toContain('border: none;')
+    expect(css).not.toContain('border-left: 1px solid var(--rule);')
+    expect(css).toContain('.theme-claude .toc a:hover,\n.theme-claude .toc a:focus-visible,\n.theme-claude .toc li:first-child > a {')
+    expect(css).toContain('border-radius: 999px;')
+    expect(css).toContain('background: color-mix(in srgb, var(--muted) 10%, transparent);')
     expect(css).toContain('white-space: nowrap;')
     expect(css).toContain('overflow: hidden;')
     expect(css).toContain('text-overflow: ellipsis;')
@@ -89,10 +96,17 @@ describe('themes', () => {
     expect((theme.mermaid as Record<string, unknown>).themeVariables).toBeTypeOf('object')
   })
 
-  it('truncates only gpt wide-screen TOC side-rail links with one-line ellipsis', () => {
+  it('uses a wide concise desktop gutter before truncating gpt TOC side-rail links', () => {
     const css = loadTheme('gpt').css
-    expect(css).toContain('@media (min-width: 1200px)')
-    expect(css).toContain('@media (min-width: 1200px) {\n  .theme-gpt .toc {')
+    expect(css).toContain('@media (min-width: 1400px)')
+    expect(css).toContain('@media (min-width: 1400px) {\n  .theme-gpt .toc {')
+    expect(css).toContain('width: 244px;')
+    expect(css).toContain('margin-left: -364px;')
+    expect(css).toContain('border: none;')
+    expect(css).not.toContain('border-left: 1px solid var(--rule);')
+    expect(css).toContain('.theme-gpt .toc a:hover,\n.theme-gpt .toc a:focus-visible,\n.theme-gpt .toc li:first-child > a {')
+    expect(css).toContain('border-radius: 999px;')
+    expect(css).toContain('background: var(--surface);')
     expect(css).toContain('white-space: nowrap;')
     expect(css).toContain('overflow: hidden;')
     expect(css).toContain('text-overflow: ellipsis;')

@@ -318,47 +318,51 @@ html { scroll-behavior: smooth; }
   color: var(--muted);
 }
 .theme-claude .toc ul { list-style: none; margin: 0; padding-left: 0; }
-/* Sub-items (h3) sit under a quiet guide line so each section reads as a group. */
 .theme-claude .toc ul ul {
   margin: 0.45rem 0 0.1rem;
   padding-left: 0.9em;
-  border-left: 1px solid var(--rule);
 }
 .theme-claude .toc li { margin: 0.55rem 0; }
 .theme-claude .toc ul ul li { margin: 0.4rem 0; }
-/* Hanging indent: when a long CJK entry wraps, the continuation lines align
-   under the title instead of resetting to the margin — so each entry reads as
-   one block and adjacent items don't blur together. */
 .theme-claude .toc a {
   display: block;
-  padding-left: 1.15em;
-  text-indent: -1.15em;
+  padding: 0.22rem 0.55rem;
   color: var(--muted);
   text-decoration: none;
-  transition: color 0.15s ease;
+  border-radius: 999px;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 .theme-claude .toc ul ul a { font-size: 0.95em; }
-.theme-claude .toc a:hover { color: var(--accent-strong); }
+.theme-claude .toc a:hover,
+.theme-claude .toc a:focus-visible,
+.theme-claude .toc li:first-child > a {
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--muted) 10%, transparent);
+}
 
-@media (min-width: 1200px) {
+@media (min-width: 1400px) {
   .theme-claude .toc {
     float: left;
     position: sticky;
     top: 2rem;
     width: 220px;
-    margin-left: -264px;   /* width + gutter gap; pull beside the centered column */
+    margin-left: -340px;
     max-height: calc(100vh - 4rem);
-    overflow-y: auto;      /* a long TOC scrolls within the rail instead of clipping */
-    padding: 0.1rem 0 0.1rem 1rem;
+    overflow-y: auto;
+    padding: 0;
     border: none;
-    border-left: 1px solid var(--rule);  /* a quiet spine gives the side-rail structure */
     border-radius: 0;
     background: none;
     font-size: 0.82rem;
     line-height: 1.5;
   }
-  .theme-claude .toc li { margin: 0.65rem 0; }
-  .theme-claude .toc ul ul li { margin: 0.5rem 0; }
+  .theme-claude .toc-title { padding: 0 0.55rem; }
+  .theme-claude .toc ul ul {
+    margin: 0.35rem 0 0.05rem;
+    padding-left: 0.55rem;
+  }
+  .theme-claude .toc li { margin: 0.3rem 0; }
+  .theme-claude .toc ul ul li { margin: 0.25rem 0; }
   .theme-claude .toc a {
     white-space: nowrap;
     overflow: hidden;

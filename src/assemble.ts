@@ -22,6 +22,9 @@ export function assembleDocument(input: AssembleInput): string {
   const header = headerTitle
     ? `<header class="md-header"><h1>${escapeHtml(headerTitle)}</h1></header>\n`
     : ''
+  const content = header
+    ? `${header}${toc}${bodyHtml}`
+    : insertTocAfterLeadingH1(bodyHtml, toc)
   return `<!DOCTYPE html>
 <html lang="${escapeHtml(lang)}">
 <head>
@@ -34,9 +37,16 @@ ${fontFaceCss}${fontFaceCss ? '\n' : ''}${katexCss}${katexCss ? '\n' : ''}${them
 </head>
 <body class="theme-${theme.scopeClass ?? theme.name}">
 <article class="md-content">
-${header}${toc}${bodyHtml}
+${content}
 </article>
 </body>
 </html>
 `
+}
+
+function insertTocAfterLeadingH1(bodyHtml: string, toc: string): string {
+  if (!toc) return bodyHtml
+  const leadingH1 = bodyHtml.match(/^(\s*<h1\b[^>]*>[\s\S]*?<\/h1>\n?)/)
+  if (!leadingH1) return `${toc}${bodyHtml}`
+  return `${leadingH1[1]}${toc}${bodyHtml.slice(leadingH1[1].length)}`
 }
