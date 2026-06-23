@@ -345,7 +345,7 @@ html { scroll-behavior: smooth; }
 .theme-claude .toc ul ul a { font-size: 0.95em; }
 .theme-claude .toc a:hover,
 .theme-claude .toc a:focus-visible,
-.theme-claude .toc li:first-child > a {
+.theme-claude .toc a[aria-current="location"] {
   color: var(--accent-strong);
   background: color-mix(in srgb, var(--muted) 10%, transparent);
 }
@@ -484,6 +484,30 @@ html { scroll-behavior: smooth; }
 </section>
 
 </article>
+<script>
+(() => {
+  const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+  if (links.length === 0) return;
+  const entries = links
+    .map((link) => ({ link, target: document.getElementById(decodeURIComponent(link.hash.slice(1))) }))
+    .filter((entry) => entry.target);
+  const activate = (entry) => {
+    links.forEach((link) => link.removeAttribute('aria-current'));
+    entry?.link.setAttribute('aria-current', 'location');
+  };
+  const currentEntry = () => {
+    let current = entries[0];
+    for (const entry of entries) {
+      if (entry.target.getBoundingClientRect().top <= 96) current = entry;
+    }
+    return current;
+  };
+  const update = () => activate(currentEntry());
+  update();
+  addEventListener('scroll', update, { passive: true });
+  addEventListener('hashchange', () => requestAnimationFrame(update));
+})();
+</script>
 </body>
 </html>
 "

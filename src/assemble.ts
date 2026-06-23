@@ -39,7 +39,7 @@ ${fontFaceCss}${fontFaceCss ? '\n' : ''}${katexCss}${katexCss ? '\n' : ''}${them
 <article class="md-content">
 ${content}
 </article>
-</body>
+${toc ? tocStateScript : ''}</body>
 </html>
 `
 }
@@ -50,3 +50,29 @@ function insertTocAfterLeadingH1(bodyHtml: string, toc: string): string {
   if (!leadingH1) return `${toc}${bodyHtml}`
   return `${leadingH1[1]}${toc}${bodyHtml.slice(leadingH1[1].length)}`
 }
+
+const tocStateScript = `<script>
+(() => {
+  const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+  if (links.length === 0) return;
+  const entries = links
+    .map((link) => ({ link, target: document.getElementById(decodeURIComponent(link.hash.slice(1))) }))
+    .filter((entry) => entry.target);
+  const activate = (entry) => {
+    links.forEach((link) => link.removeAttribute('aria-current'));
+    entry?.link.setAttribute('aria-current', 'location');
+  };
+  const currentEntry = () => {
+    let current = entries[0];
+    for (const entry of entries) {
+      if (entry.target.getBoundingClientRect().top <= 96) current = entry;
+    }
+    return current;
+  };
+  const update = () => activate(currentEntry());
+  update();
+  addEventListener('scroll', update, { passive: true });
+  addEventListener('hashchange', () => requestAnimationFrame(update));
+})();
+</script>
+`

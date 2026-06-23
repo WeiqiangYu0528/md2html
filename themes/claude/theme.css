@@ -335,7 +335,7 @@ html { scroll-behavior: smooth; }
 .theme-claude .toc ul ul a { font-size: 0.95em; }
 .theme-claude .toc a:hover,
 .theme-claude .toc a:focus-visible,
-.theme-claude .toc li:first-child > a {
+.theme-claude .toc a[aria-current="location"] {
   color: var(--accent-strong);
   background: color-mix(in srgb, var(--muted) 10%, transparent);
 }

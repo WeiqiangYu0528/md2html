@@ -311,7 +311,7 @@ body.theme-gpt {
 .theme-gpt .toc ul ul a { font-size: 0.95em; }
 .theme-gpt .toc a:hover,
 .theme-gpt .toc a:focus-visible,
-.theme-gpt .toc li:first-child > a {
+.theme-gpt .toc a[aria-current="location"] {
   color: var(--accent-hover);
   background: var(--surface);
 }

@@ -63,6 +63,7 @@ describe('assembleDocument', () => {
     // order: header h1, then toc, then body
     expect(html.indexOf('<header')).toBeLessThan(html.indexOf('<nav class="toc">'))
     expect(html.indexOf('<nav class="toc">')).toBeLessThan(html.indexOf('<p>Body</p>'))
+    expect(html).toContain('aria-current')
   })
 
   it('injects the TOC after a leading markdown h1 when no header is provided', () => {
