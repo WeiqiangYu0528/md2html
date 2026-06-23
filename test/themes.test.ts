@@ -87,6 +87,7 @@ describe('themes', () => {
     expect(theme.fonts).toEqual([])
     expect(theme.css).toContain('.theme-gpt .md-content')
     expect(theme.css).toContain('max-width: 760px;')
+    expect(theme.css).toContain('.theme-gpt h1 { font-size: clamp(2.25rem, 4vw, 3rem); }')
     expect(theme.css).toContain('.theme-gpt:lang(zh) .md-content { max-width: 46em; }')
     expect(theme.css).toContain('--bg: #ffffff')
     expect(theme.css).not.toContain('.theme-claude .md-content')
