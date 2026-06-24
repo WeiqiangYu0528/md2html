@@ -14,6 +14,8 @@ export interface ConvertResult {
   lang: string
   /** Table-of-contents nav HTML, or '' when no TOC is generated. */
   toc: string
+  /** Non-fatal conversion warnings to print from the CLI. */
+  warnings: string[]
 }
 
 /**
@@ -34,15 +36,21 @@ export async function convert(
   const tokens = md.parse(content, env)
   // Collect ```mermaid sources (in document order) and render them to SVG before
   // the synchronous render pass. Only launches a browser when diagrams exist.
+  const warnings: string[] = []
   const mermaidSources = tokens
     .filter((t) => t.type === 'fence' && t.info.trim() === 'mermaid')
     .map((t) => t.content)
   if (mermaidSources.length > 0) {
     try {
-      env.mermaid = await renderMermaid(mermaidSources, mermaidConfig)
-    } catch {
-      // Browser unavailable — fall back to source blocks for every diagram.
+      const rendered = await renderMermaid(mermaidSources, mermaidConfig)
+      env.mermaid = rendered.html
+      warnings.push(...rendered.warnings)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      const count = mermaidSources.length
+      const noun = count === 1 ? 'diagram' : 'diagrams'
       env.mermaid = mermaidSources.map((s) => mermaidFallbackHtml(s))
+      warnings.push(`Warning: Mermaid renderer could not start; showing source fallback for ${count} ${noun}.\n${message}`)
     }
     env.mermaidIndex = 0
   }
@@ -53,5 +61,5 @@ export async function convert(
   const hasMath = bodyHtml.includes('<eq>') || bodyHtml.includes('<eqn>')
   const lang = detectLang(content, metadata)
   const toc = buildToc(tokens, { lang, toc: metadata.toc })
-  return { metadata, bodyHtml, hasMath, lang, toc }
+  return { metadata, bodyHtml, hasMath, lang, toc, warnings }
 }

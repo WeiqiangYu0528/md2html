@@ -5,9 +5,10 @@ vi.mock('../src/mermaid/render', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../src/mermaid/render')>()
   return {
     ...actual,
-    renderMermaid: vi.fn(async (sources: string[]) =>
-      sources.map((_s, i) => `<figure class="mermaid"><svg>MOCK${i}</svg></figure>`),
-    ),
+    renderMermaid: vi.fn(async (sources: string[]) => ({
+      html: sources.map((_s, i) => `<figure class="mermaid"><svg>MOCK${i}</svg></figure>`),
+      warnings: [],
+    })),
   }
 })
 
@@ -83,11 +84,29 @@ describe('convert mermaid diagrams', () => {
     expect(mod.renderMermaid).toHaveBeenCalledWith(expect.any(Array), { theme: 'base' })
   })
 
-  it('falls back for every diagram when the renderer throws (no browser)', async () => {
+  it('returns Mermaid renderer warnings', async () => {
     const mod = await import('../src/mermaid/render')
-    ;(mod.renderMermaid as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('no browser'))
-    const { bodyHtml } = await convert('```mermaid\ngraph TD; A-->B;\n```', 'vitesse-dark')
+    ;(mod.renderMermaid as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      html: ['<figure class="mermaid-fallback"><pre><code>graph TD; bad</code></pre></figure>'],
+      warnings: ['Warning: Mermaid diagram 1 failed to render; showing source fallback.\nParse error'],
+    })
+
+    const { bodyHtml, warnings } = await convert('```mermaid\ngraph TD; bad\n```', 'vitesse-dark')
+
     expect(bodyHtml).toContain('class="mermaid-fallback"')
+    expect(warnings).toEqual(['Warning: Mermaid diagram 1 failed to render; showing source fallback.\nParse error'])
+  })
+
+  it('falls back for every diagram when the renderer throws unexpectedly', async () => {
+    const mod = await import('../src/mermaid/render')
+    ;(mod.renderMermaid as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('unexpected renderer crash'))
+
+    const { bodyHtml, warnings } = await convert('```mermaid\ngraph TD; A-->B;\n```', 'vitesse-dark')
+
+    expect(bodyHtml).toContain('class="mermaid-fallback"')
+    expect(warnings).toEqual([
+      'Warning: Mermaid renderer could not start; showing source fallback for 1 diagram.\nunexpected renderer crash',
+    ])
   })
 
   it('does not invoke the renderer when there are no diagrams', async () => {
