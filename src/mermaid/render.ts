@@ -1,60 +1,78 @@
-import { createRequire } from 'node:module'
-import { dirname, join } from 'node:path'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { escapeHtml } from '../escape'
+import { runMermaidCli } from './cli-runner'
 
-/**
- * Fallback HTML for a diagram that could not be rendered (no browser, or invalid
- * Mermaid syntax): the source shown as a code block. The theme styles
- * `.mermaid-fallback` (and may add a "not rendered" note).
- */
+export interface MermaidRenderResult {
+  html: string[]
+  warnings: string[]
+}
+
 export function mermaidFallbackHtml(source: string): string {
   return `<figure class="mermaid-fallback"><pre><code>${escapeHtml(source)}</code></pre></figure>`
 }
 
-/**
- * Render each Mermaid source to an inline-SVG `<figure class="mermaid">`. A source
- * with invalid syntax becomes a `.mermaid-fallback` block (per-source). Throws only
- * if the browser cannot launch — the caller then falls back for every diagram.
- *
- * @param config Mermaid init config (theme/themeVariables), supplied by the theme.
- */
 export async function renderMermaid(
   sources: string[],
   config: Record<string, unknown> = {},
-): Promise<string[]> {
-  const require = createRequire(import.meta.url)
-  const bundle = join(dirname(require.resolve('mermaid/package.json')), 'dist', 'mermaid.min.js')
-  // Lazy import: non-diagram conversions never load Playwright; a missing
-  // Playwright throws here and the caller (convert) falls back to source blocks.
-  const { chromium } = await import('playwright')
-  const ep = process.env.MD2HTML_CHROMIUM_PATH
-  const browser = await chromium.launch(ep ? { headless: true, executablePath: ep } : { headless: true })
+): Promise<MermaidRenderResult> {
+  const workDir = await mkdtemp(join(tmpdir(), 'md2html-mermaid-'))
   try {
-    const page = await browser.newPage()
-    await page.setContent('<!doctype html><html><body></body></html>')
-    await page.addScriptTag({ path: bundle })
-    const svgs: Array<string | null> = await page.evaluate(
-      async ({ sources, config }) => {
-        // mermaid is injected as a window global by addScriptTag
-        const mermaid = (globalThis as unknown as { mermaid: any }).mermaid
-        mermaid.initialize({ startOnLoad: false, ...config, securityLevel: 'strict' })
-        const out: Array<string | null> = []
-        for (let i = 0; i < sources.length; i++) {
-          try {
-            const { svg } = await mermaid.render('d' + i, sources[i])
-            out.push(svg)
-          } catch {
-            out.push(null)
-          }
+    const configPath = join(workDir, 'mermaid-config.json')
+    await writeFile(configPath, JSON.stringify(config), 'utf8')
+
+    const html: string[] = []
+    const warnings: string[] = []
+    for (let i = 0; i < sources.length; i++) {
+      const source = sources[i]
+      const inputPath = join(workDir, `diagram-${i}.mmd`)
+      const outputPath = join(workDir, `diagram-${i}.svg`)
+      await writeFile(inputPath, source, 'utf8')
+
+      const result = await runMermaidCli(inputPath, outputPath, configPath)
+      const output = cleanRendererOutput(result.stderr || result.stdout)
+      if (result.code !== 0) {
+        if (isRendererInfrastructureFailure(output)) {
+          return infrastructureFallback(sources, output)
         }
-        return out
-      },
-      { sources, config },
-    )
-    return svgs.map((svg, i) =>
-      svg ? `<figure class="mermaid">${svg}</figure>` : mermaidFallbackHtml(sources[i]),
-    )
+        html.push(mermaidFallbackHtml(source))
+        warnings.push(`Warning: Mermaid diagram ${i + 1} failed to render; showing source fallback.\n${output}`)
+        continue
+      }
+
+      try {
+        const svg = await readFile(outputPath, 'utf8')
+        html.push(`<figure class="mermaid">${svg}</figure>`)
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err)
+        html.push(mermaidFallbackHtml(source))
+        warnings.push(`Warning: Mermaid diagram ${i + 1} failed to render; showing source fallback.\n${message}`)
+      }
+    }
+
+    return { html, warnings }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    return infrastructureFallback(sources, message)
   } finally {
-    await browser.close()
+    await rm(workDir, { recursive: true, force: true })
   }
+}
+
+function infrastructureFallback(sources: string[], message: string): MermaidRenderResult {
+  const count = sources.length
+  const noun = count === 1 ? 'diagram' : 'diagrams'
+  return {
+    html: sources.map((source) => mermaidFallbackHtml(source)),
+    warnings: [`Warning: Mermaid renderer could not start; showing source fallback for ${count} ${noun}.\n${message}`],
+  }
+}
+
+function cleanRendererOutput(output: string): string {
+  return output.trim() || 'Mermaid CLI exited without an error message.'
+}
+
+function isRendererInfrastructureFailure(output: string): boolean {
+  return /chrom(e|ium)|puppeteer|browser|spawn|enoent|executable/i.test(output)
 }

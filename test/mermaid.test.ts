@@ -1,7 +1,15 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { describe, it, expect, beforeAll, vi, beforeEach } from 'vitest'
 import type MarkdownIt from 'markdown-it'
+import { writeFile, readFile } from 'node:fs/promises'
 import { mermaidFallbackHtml, renderMermaid } from '../src/mermaid/render'
+import { runMermaidCli } from '../src/mermaid/cli-runner'
 import { createRenderer } from '../src/markdown/renderer'
+
+vi.mock('../src/mermaid/cli-runner', () => ({
+  runMermaidCli: vi.fn(),
+}))
+
+const mockedRunMermaidCli = vi.mocked(runMermaidCli)
 
 describe('mermaidFallbackHtml', () => {
   it('wraps the source in a .mermaid-fallback figure with escaped text', () => {
@@ -20,7 +28,7 @@ describe('mermaid fence interception', () => {
     const env = { mermaid: ['<figure class="mermaid">PRE_RENDERED</figure>'], mermaidIndex: 0 }
     const html = md.render('```mermaid\ngraph TD; A-->B;\n```', env)
     expect(html).toContain('<figure class="mermaid">PRE_RENDERED</figure>')
-    expect(html).not.toContain('class="shiki') // bypassed Shiki entirely
+    expect(html).not.toContain('class="shiki')
   })
 
   it('falls back to source when env has no rendered diagram', () => {
@@ -34,28 +42,75 @@ describe('mermaid fence interception', () => {
   })
 })
 
-describe('renderMermaid (real browser, gated)', () => {
-  it('renders a flowchart to inline SVG, or self-skips if no browser', async (ctx) => {
-    let out: string[]
-    try {
-      out = await renderMermaid(['graph TD; A[Start]-->B[Done];'])
-    } catch {
-      ctx.skip()
-      return
-    }
-    expect(out[0]).toContain('<figure class="mermaid">')
-    expect(out[0]).toContain('<svg')
-    expect(out[0]).toContain('Start')
-  }, 60000)
+describe('renderMermaid', () => {
+  beforeEach(() => {
+    mockedRunMermaidCli.mockReset()
+  })
 
-  it('renders invalid syntax as a fallback (when a browser is available)', async (ctx) => {
-    let out: string[]
-    try {
-      out = await renderMermaid(['graph TD; this is not valid mermaid @@@'])
-    } catch {
-      ctx.skip()
-      return
-    }
-    expect(out[0]).toContain('class="mermaid-fallback"')
-  }, 60000)
+  it('renders successful Mermaid CLI output as inline SVG figures', async () => {
+    mockedRunMermaidCli.mockImplementation(async (_inputPath, outputPath) => {
+      await writeFile(outputPath, '<svg><text>Rendered</text></svg>', 'utf8')
+      return { code: 0, stdout: '', stderr: '' }
+    })
+
+    const result = await renderMermaid(['graph TD; A-->B;'])
+
+    expect(result.html).toEqual(['<figure class="mermaid"><svg><text>Rendered</text></svg></figure>'])
+    expect(result.warnings).toEqual([])
+  })
+
+  it('passes theme Mermaid config to the temporary config file', async () => {
+    let configFileContent = ''
+    mockedRunMermaidCli.mockImplementation(async (_inputPath, outputPath, configPath) => {
+      configFileContent = await readFile(configPath, 'utf8')
+      await writeFile(outputPath, '<svg></svg>', 'utf8')
+      return { code: 0, stdout: '', stderr: '' }
+    })
+
+    await renderMermaid(['graph TD; A-->B;'], { theme: 'base', themeVariables: { primaryColor: '#fff' } })
+
+    expect(JSON.parse(configFileContent)).toEqual({ theme: 'base', themeVariables: { primaryColor: '#fff' } })
+  })
+
+  it('falls back only the diagram whose Mermaid CLI render fails', async () => {
+    mockedRunMermaidCli
+      .mockImplementationOnce(async (_inputPath, outputPath) => {
+        await writeFile(outputPath, '<svg><text>One</text></svg>', 'utf8')
+        return { code: 0, stdout: '', stderr: '' }
+      })
+      .mockResolvedValueOnce({ code: 1, stdout: '', stderr: 'Parse error on line 1' })
+
+    const result = await renderMermaid(['graph TD; A-->B;', 'graph TD; invalid @@@'])
+
+    expect(result.html[0]).toContain('<figure class="mermaid"><svg><text>One</text></svg></figure>')
+    expect(result.html[1]).toContain('class="mermaid-fallback"')
+    expect(result.html[1]).toContain('invalid @@@')
+    expect(result.warnings).toEqual([
+      'Warning: Mermaid diagram 2 failed to render; showing source fallback.\nParse error on line 1',
+    ])
+  })
+
+  it('falls back all diagrams when Mermaid CLI infrastructure cannot start', async () => {
+    mockedRunMermaidCli.mockRejectedValueOnce(new Error('spawn mmdc ENOENT'))
+
+    const result = await renderMermaid(['graph TD; A-->B;', 'graph TD; C-->D;'])
+
+    expect(result.html).toHaveLength(2)
+    expect(result.html.every((html) => html.includes('class="mermaid-fallback"'))).toBe(true)
+    expect(result.warnings).toEqual([
+      'Warning: Mermaid renderer could not start; showing source fallback for 2 diagrams.\nspawn mmdc ENOENT',
+    ])
+  })
+
+  it('treats missing browser errors as renderer infrastructure failure', async () => {
+    mockedRunMermaidCli.mockResolvedValueOnce({ code: 1, stdout: '', stderr: 'Could not find Chrome' })
+
+    const result = await renderMermaid(['graph TD; A-->B;', 'graph TD; C-->D;'])
+
+    expect(result.html).toHaveLength(2)
+    expect(result.html.every((html) => html.includes('class="mermaid-fallback"'))).toBe(true)
+    expect(result.warnings).toEqual([
+      'Warning: Mermaid renderer could not start; showing source fallback for 2 diagrams.\nCould not find Chrome',
+    ])
+  })
 })
