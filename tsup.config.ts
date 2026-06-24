@@ -7,5 +7,6 @@ export default defineConfig({
   outDir: 'dist',
   clean: true,
   dts: false,
+  external: ['@mermaid-js/mermaid-cli', 'puppeteer'],
   banner: { js: '#!/usr/bin/env node' },
 })
