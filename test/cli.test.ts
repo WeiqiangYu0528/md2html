@@ -1,8 +1,23 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { mkdtempSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { run } from '../src/cli'
+
+vi.mock('../src/mermaid/render', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../src/mermaid/render')>()
+  return {
+    ...actual,
+    renderMermaid: vi.fn(async (sources: string[]) => ({
+      html: sources.map((source) => actual.mermaidFallbackHtml(source)),
+      warnings: ['Warning: Mermaid diagram 1 failed to render; showing source fallback.\nParse error'],
+    })),
+  }
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 function tmpFile(name: string, content: string): string {
   const dir = mkdtempSync(join(tmpdir(), 'md2html-'))
@@ -80,5 +95,17 @@ describe('cli run()', () => {
     expect(await run([shortIn])).toBe(0)
     const shortHtml = readFileSync(shortIn.replace(/\.md$/, '.html'), 'utf8')
     expect(shortHtml).not.toContain('<nav class="toc"')
+  })
+
+  it('prints Mermaid renderer warnings to stderr while still writing HTML', async () => {
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const input = tmpFile('diagram.md', '```mermaid\ngraph TD; bad\n```')
+
+    const code = await run([input])
+
+    expect(code).toBe(0)
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('Warning: Mermaid diagram 1 failed to render'))
+    const html = readFileSync(input.replace(/\.md$/, '.html'), 'utf8')
+    expect(html).toContain('class="mermaid-fallback"')
   })
 })

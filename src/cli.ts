@@ -70,7 +70,7 @@ export async function run(argv: string[]): Promise<number> {
     return 1
   }
 
-  const { metadata, bodyHtml, hasMath, lang, toc } = await convert(raw, theme.shikiTheme, theme.mermaid ?? {})
+  const { metadata, bodyHtml, hasMath, lang, toc, warnings } = await convert(raw, theme.shikiTheme, theme.mermaid ?? {})
   const fmTitle = typeof metadata.title === 'string' ? metadata.title : undefined
   const title = fmTitle ?? basename(inputPath, extname(inputPath))
 
@@ -89,6 +89,10 @@ export async function run(argv: string[]): Promise<number> {
   const katexCss = hasMath ? buildKatexCss() : ''
 
   const html = assembleDocument({ title, headerTitle: fmTitle, bodyHtml, theme, fontFaceCss, katexCss, lang, toc })
+
+  for (const warning of warnings) {
+    process.stderr.write(`${warning}\n`)
+  }
 
   const outputPath = (values.output as string) ?? resolve(inputPath.replace(/\.md$/i, '') + '.html')
   try {
