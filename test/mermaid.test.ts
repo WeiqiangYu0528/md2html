@@ -72,6 +72,18 @@ describe('renderMermaid', () => {
     expect(JSON.parse(configFileContent)).toEqual({ theme: 'base', themeVariables: { primaryColor: '#fff' } })
   })
 
+  it('assigns a unique SVG id to each rendered diagram', async () => {
+    mockedRunMermaidCli.mockImplementation(async (_inputPath, outputPath) => {
+      await writeFile(outputPath, '<svg></svg>', 'utf8')
+      return { code: 0, stdout: '', stderr: '' }
+    })
+
+    await renderMermaid(['graph TD; A-->B;', 'graph TD; C-->D;'])
+
+    expect(mockedRunMermaidCli).toHaveBeenNthCalledWith(1, expect.any(String), expect.any(String), expect.any(String), 'md2html-mermaid-0')
+    expect(mockedRunMermaidCli).toHaveBeenNthCalledWith(2, expect.any(String), expect.any(String), expect.any(String), 'md2html-mermaid-1')
+  })
+
   it('falls back only the diagram whose Mermaid CLI render fails', async () => {
     mockedRunMermaidCli
       .mockImplementationOnce(async (_inputPath, outputPath) => {

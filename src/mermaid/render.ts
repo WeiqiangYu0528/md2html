@@ -30,7 +30,7 @@ export async function renderMermaid(
       const outputPath = join(workDir, `diagram-${i}.svg`)
       await writeFile(inputPath, source, 'utf8')
 
-      const result = await runMermaidCli(inputPath, outputPath, configPath)
+      const result = await runMermaidCli(inputPath, outputPath, configPath, `md2html-mermaid-${i}`)
       const output = cleanRendererOutput(result.stderr || result.stdout)
       if (result.code !== 0) {
         if (isRendererInfrastructureFailure(output)) {

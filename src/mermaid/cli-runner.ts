@@ -13,12 +13,12 @@ export function resolveMmdcCli(): string {
   return join(dirname(require.resolve('@mermaid-js/mermaid-cli')), 'cli.js')
 }
 
-export function buildMmdcArgs(cliPath: string, inputPath: string, outputPath: string, configPath: string): string[] {
-  return [cliPath, '-i', inputPath, '-o', outputPath, '-c', configPath]
+export function buildMmdcArgs(cliPath: string, inputPath: string, outputPath: string, configPath: string, svgId: string): string[] {
+  return [cliPath, '-i', inputPath, '-o', outputPath, '-c', configPath, '-I', svgId]
 }
 
-export function runMermaidCli(inputPath: string, outputPath: string, configPath: string): Promise<MermaidCliResult> {
-  const child = spawn(process.execPath, buildMmdcArgs(resolveMmdcCli(), inputPath, outputPath, configPath), {
+export function runMermaidCli(inputPath: string, outputPath: string, configPath: string, svgId: string): Promise<MermaidCliResult> {
+  const child = spawn(process.execPath, buildMmdcArgs(resolveMmdcCli(), inputPath, outputPath, configPath, svgId), {
     stdio: ['ignore', 'pipe', 'pipe'],
   })
 
