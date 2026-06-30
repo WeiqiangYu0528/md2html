@@ -15,7 +15,7 @@ Usage:
 
 Options:
   -o, --output <path>   Output file (default: <input>.html next to source)
-      --theme <name>    Theme to use (default: claude)
+      --theme <name>    Theme to use (default: gpt)
       --embed-fonts     Inline the theme's fonts into the HTML
       --list-themes     List available themes and exit
   -h, --help            Show this help
@@ -29,7 +29,7 @@ export async function run(argv: string[]): Promise<number> {
       args: argv,
       allowPositionals: true,
       options: {
-        theme: { type: 'string', default: 'claude' },
+        theme: { type: 'string', default: 'gpt' },
         output: { type: 'string', short: 'o' },
         'embed-fonts': { type: 'boolean', default: false },
         'list-themes': { type: 'boolean', default: false },

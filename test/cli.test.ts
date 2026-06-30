@@ -35,7 +35,7 @@ describe('cli run()', () => {
     expect(existsSync(out)).toBe(true)
     const html = readFileSync(out, 'utf8')
     expect(html).toContain('<!DOCTYPE html>')
-    expect(html).toContain('<body class="theme-claude">')
+    expect(html).toContain('<body class="theme-gpt">')
     expect(html).toContain('<style>')
   })
 
