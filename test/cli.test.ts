@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { mkdtempSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { run } from '../src/cli'
@@ -107,5 +107,82 @@ describe('cli run()', () => {
     expect(stderr).toHaveBeenCalledWith(expect.stringContaining('Warning: Mermaid diagram 1 failed to render'))
     const html = readFileSync(input.replace(/\.md$/, '.html'), 'utf8')
     expect(html).toContain('class="mermaid-fallback"')
+  })
+})
+
+describe('cli run() — folder input', () => {
+  function tmpTree(): string {
+    const root = mkdtempSync(join(tmpdir(), 'md2html-tree-'))
+    mkdirSync(join(root, 'sub', 'deep'), { recursive: true })
+    writeFileSync(join(root, 'root.md'), '# Root\n\nHello.')
+    writeFileSync(join(root, 'sub', 'a.markdown'), '# Sub A\n\ntext')
+    writeFileSync(join(root, 'sub', 'deep', 'd.md'), '# Deep\n\ntext')
+    writeFileSync(join(root, 'sub', 'skip.txt'), 'not markdown')
+    return root
+  }
+
+  it('recursively converts every .md/.markdown in place, mirroring the tree', async () => {
+    const root = tmpTree()
+    const code = await run([root, '--theme', 'claude'])
+    expect(code).toBe(0)
+    expect(existsSync(join(root, 'root.html'))).toBe(true)
+    expect(existsSync(join(root, 'sub', 'a.html'))).toBe(true)
+    expect(existsSync(join(root, 'sub', 'deep', 'd.html'))).toBe(true)
+    // Non-markdown files are left untouched (no .html sibling).
+    expect(existsSync(join(root, 'sub', 'skip.html'))).toBe(false)
+    expect(readFileSync(join(root, 'root.html'), 'utf8')).toContain('<body class="theme-claude">')
+  })
+
+  it('writes the mirrored tree under --output when given an output directory', async () => {
+    const root = tmpTree()
+    const out = mkdtempSync(join(tmpdir(), 'md2html-out-'))
+    const code = await run([root, '-o', out])
+    expect(code).toBe(0)
+    expect(existsSync(join(out, 'root.html'))).toBe(true)
+    expect(existsSync(join(out, 'sub', 'deep', 'd.html'))).toBe(true)
+    // Source tree is not polluted with output when --output is set.
+    expect(existsSync(join(root, 'root.html'))).toBe(false)
+  })
+
+  it('returns 1 for a folder with no Markdown files', async () => {
+    const empty = mkdtempSync(join(tmpdir(), 'md2html-empty-'))
+    expect(await run([empty])).toBe(1)
+  })
+})
+
+describe('cli run() — internal link rewriting', () => {
+  it('rewrites .md links between converted files, keeps unconverted and external links', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'md2html-links-'))
+    mkdirSync(join(root, 'sub'), { recursive: true })
+    writeFileSync(
+      join(root, 'a.md'),
+      '# A\n\n[to b](./sub/b.md) [missing](./nope.md) [ext](https://x.com/y.md) [anchor](#top)',
+    )
+    writeFileSync(join(root, 'sub', 'b.md'), '# B\n\n[back to a](../a.md)')
+
+    const code = await run([root, '--theme', 'claude'])
+    expect(code).toBe(0)
+
+    const aHtml = readFileSync(join(root, 'a.html'), 'utf8')
+    expect(aHtml).toContain('href="./sub/b.html"')      // converted → rewritten
+    expect(aHtml).toContain('href="./nope.md"')          // not converted → unchanged
+    expect(aHtml).toContain('href="https://x.com/y.md"') // external → unchanged
+    expect(aHtml).toContain('href="#top"')               // anchor → unchanged
+
+    const bHtml = readFileSync(join(root, 'sub', 'b.html'), 'utf8')
+    expect(bHtml).toContain('href="../a.html"')          // ../ traversal into converted set
+  })
+
+  it('leaves .md links untouched for a single-file conversion', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'md2html-single-'))
+    writeFileSync(join(dir, 'sibling.md'), '# Sibling')
+    const input = join(dir, 'main.md')
+    writeFileSync(input, '# Main\n\n[to sibling](./sibling.md)')
+
+    const code = await run([input, '--theme', 'claude'])
+    expect(code).toBe(0)
+
+    const html = readFileSync(input.replace(/\.md$/, '.html'), 'utf8')
+    expect(html).toContain('href="./sibling.md"') // single-file mode → not rewritten
   })
 })
