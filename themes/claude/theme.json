@@ -1,25 +1,25 @@
 {
   "name": "claude",
-  "description": "Warm serif essay theme inspired by the Anthropic aesthetic.",
+  "description": "Anthropic docs theme — cool near-white page, serif headings on a sans body, white code cards, bordered callouts (platform.claude.com).",
   "shikiThemeFile": "code-theme.json",
   "fonts": [],
   "mermaid": {
     "theme": "base",
     "themeVariables": {
-      "fontFamily": "Georgia, 'Iowan Old Style', serif",
-      "primaryColor": "#f3ede1",
-      "primaryTextColor": "#2b2a26",
-      "primaryBorderColor": "#cc785c",
-      "secondaryColor": "#eef1e4",
-      "tertiaryColor": "#faf9f5",
-      "lineColor": "#a64f34",
-      "textColor": "#2b2a26",
-      "mainBkg": "#f3ede1",
-      "nodeBorder": "#cc785c",
-      "clusterBkg": "#faf9f5",
-      "clusterBorder": "#e7e0d2",
-      "noteBkgColor": "#f7efda",
-      "noteTextColor": "#2b2a26"
+      "fontFamily": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+      "primaryColor": "#eef2f9",
+      "primaryTextColor": "#0b0b0b",
+      "primaryBorderColor": "#256bc1",
+      "secondaryColor": "#eef4e2",
+      "tertiaryColor": "#fcfcfb",
+      "lineColor": "#184e95",
+      "textColor": "#0b0b0b",
+      "mainBkg": "#eef2f9",
+      "nodeBorder": "#256bc1",
+      "clusterBkg": "#fcfcfb",
+      "clusterBorder": "#e0e0dd",
+      "noteBkgColor": "#fbf3e2",
+      "noteTextColor": "#0b0b0b"
     }
   }
 }

@@ -11,7 +11,7 @@ under `themes/<name>/` with `theme.json` + `theme.css`; no parser code changes.
 ## Element hooks
 - Headings `<h1>`–`<h6>` carry stable `id` attributes (slugified text)
 - Callouts: `<div class="callout callout-note|tip|important|warning|caution">` with a leading `<p class="callout-title">`. The title opens with a presentation-free icon hook `<span class="callout-icon" aria-hidden="true"></span>`; the theme supplies the glyph and color via CSS (e.g. a masked SVG), so iconography is theme-owned.
-- Code blocks: `<pre class="shiki" style="…">` with inline token colors (Shiki); inline code is `<code>`
+- Code blocks: each fenced block is `<div class="code-card">` wrapping `<pre class="shiki" style="…">` (inline token colors from Shiki). When the fence info string carries a label after the language (GFM `` ```bash cURL `` → `cURL`, or a bare `` ```js `` → `js`), the card is preceded by a `<div class="code-card-header">` holding that label; a plain ` ``` ` fence emits no header. The theme owns the card chrome (border, radius, header bar); `pre.shiki` should be styled as a flush, transparent body so the card supplies its background. Inline code is `<code>`.
 - Math: inline math is `<eq>…</eq>`; display math is `<section><eqn>…</eqn></section>`. Inside each, KaTeX emits its own `.katex` / `.katex-display` markup (glyph metrics — a converter-owned correctness asset, like Shiki tokens, not theme-owned). A theme styles the `<eq>` / `<eqn>` wrappers and may set `.katex` color/size; the KaTeX stylesheet (with fonts inlined) is added to the document automatically, and only when the document contains math.
 - Task lists: `<li class="task-list-item">` containing an `<input type="checkbox">`
 - Footnotes: a trailing `<section class="footnotes">`

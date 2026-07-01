@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import type MarkdownIt from 'markdown-it'
-import { createRenderer } from '../src/markdown/renderer'
+import { createRenderer, codeLabel } from '../src/markdown/renderer'
 
 let md: MarkdownIt
 beforeAll(async () => { md = await createRenderer('vitesse-dark') })
@@ -38,6 +38,18 @@ describe('createRenderer', () => {
     expect(html).toContain('style="')
   })
 
+  it('wraps fenced code in a code-card with a language-label header', () => {
+    const html = md.render('```js\nconst x = 1\n```')
+    expect(html).toContain('<div class="code-card">')
+    expect(html).toContain('<div class="code-card-header">js</div>')
+  })
+
+  it('omits the code-card header for a plain (language-less) fence', () => {
+    const html = md.render('```\nplain text\n```')
+    expect(html).toContain('<div class="code-card">')
+    expect(html).not.toContain('code-card-header')
+  })
+
   it('produces clean punctuation-free heading slugs', () => {
     expect(md.render('# Reading Markdown, Beautifully')).toContain('id="reading-markdown-beautifully"')
     expect(md.render('## Hello, World! & Friends')).toContain('id="hello-world-friends"')
@@ -50,5 +62,21 @@ describe('createRenderer', () => {
     expect(html).not.toContain('id=""')
     expect(html).toContain('id="云-地区维度决定"')
     expect(html).toContain('id="作业维度资源"')
+  })
+})
+
+describe('codeLabel', () => {
+  it('returns the bare language for a single-token info string', () => {
+    expect(codeLabel('js')).toBe('js')
+  })
+
+  it('returns the trailing label when the fence carries one after the language', () => {
+    expect(codeLabel('bash cURL')).toBe('cURL')
+    expect(codeLabel('ts title="example.ts"')).toBe('title="example.ts"')
+  })
+
+  it('returns empty for a language-less fence', () => {
+    expect(codeLabel('')).toBe('')
+    expect(codeLabel('   ')).toBe('')
   })
 })

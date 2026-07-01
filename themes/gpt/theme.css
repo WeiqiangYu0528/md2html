@@ -93,14 +93,32 @@ body.theme-gpt {
   border-radius: 6px;
 }
 
-.theme-gpt pre.shiki {
+/* Code card: the converter wraps every fenced block in <div class="code-card">,
+   optionally preceded by a <div class="code-card-header"> language label. GPT's
+   panel chrome (border, radius, surface) lives on the card; the header is a thin
+   strip with a hairline divider, and pre.shiki is a flush, transparent body. */
+.theme-gpt .code-card {
   margin: 1.6rem 0;
-  padding: 1.05rem 1.15rem;
+  background: var(--surface-soft);
+  border: 1px solid var(--rule);
   border-radius: 10px;
+  overflow: hidden;
+}
+.theme-gpt .code-card-header {
+  padding: 0.4rem 1.15rem;
+  border-bottom: 1px solid var(--rule);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.76rem;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+.theme-gpt pre.shiki {
+  margin: 0;
+  padding: 1.05rem 1.15rem;
   overflow-x: auto;
   font-size: 0.84rem;
   line-height: 1.62;
-  border: 1px solid var(--rule);
+  background: transparent;
 }
 .theme-gpt pre.shiki code {
   background: none;

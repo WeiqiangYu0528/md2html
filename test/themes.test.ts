@@ -38,14 +38,15 @@ describe('themes', () => {
     const css = loadTheme('claude').css
     expect(css).toContain('@media (min-width: 1400px)')
     expect(css).toContain('@media (min-width: 1400px) {\n  .theme-claude .toc {')
-    expect(css).toContain('width: 220px;')
-    expect(css).toContain('margin-left: -340px;')
+    expect(css).toContain('width: 230px;')
+    expect(css).toContain('margin-left: -330px;')
     expect(css).toContain('border: none;')
     expect(css).not.toContain('border-left: 1px solid var(--rule);')
-    expect(css).toContain('.theme-claude .toc a:hover,\n.theme-claude .toc a:focus-visible,\n.theme-claude .toc a[aria-current="location"] {')
+    expect(css).toContain('.theme-claude .toc a[aria-current="location"] {')
     expect(css).not.toContain('.theme-claude .toc li:first-child > a')
-    expect(css).toContain('border-radius: 999px;')
-    expect(css).toContain('background: color-mix(in srgb, var(--muted) 10%, transparent);')
+    expect(css).toContain('border-radius: 8px;')
+    // The active TOC link is ink + bold, with no background pill (docs match).
+    expect(css).toContain('.theme-claude .toc a[aria-current="location"] {\n  color: var(--ink);\n  font-weight: 550;\n}')
     expect(css).toContain('white-space: nowrap;')
     expect(css).toContain('overflow: hidden;')
     expect(css).toContain('text-overflow: ellipsis;')
@@ -71,8 +72,8 @@ describe('themes', () => {
     expect(theme.name).toBe('claude-dark')
     expect(theme.scopeClass).toBe('claude')                  // inherits base scope class
     expect(theme.css).toContain('.theme-claude .md-content')  // base structural rule inherited
-    expect(theme.css).toContain('--bg: #1b1916')              // dark :root override present
-    expect(theme.css.indexOf('--bg: #faf9f5')).toBeLessThan(theme.css.indexOf('--bg: #1b1916')) // light first, dark wins
+    expect(theme.css).toContain('--bg: #15171a')              // dark :root override present
+    expect(theme.css.indexOf('--bg: #fcfcfb')).toBeLessThan(theme.css.indexOf('--bg: #15171a')) // light first, dark wins
     expect(theme.shikiTheme).toBeTypeOf('object')             // own dark code palette
     expect(theme.mermaid).toBeTypeOf('object')                // own dark mermaid config
   })

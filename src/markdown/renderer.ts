@@ -9,6 +9,20 @@ import katex from 'katex'
 import { calloutOptions } from './callouts'
 import type { ShikiTheme } from '../types'
 import { mermaidFallbackHtml } from '../mermaid/render'
+import { escapeHtml } from '../escape'
+
+/**
+ * The header-bar label for a code card, derived from a fence info string.
+ * GFM info is "<lang> <rest…>"; the docs label a block with the rest when
+ * present (e.g. ```bash cURL → "cURL"), else the bare language (```js → "js").
+ * Returns '' when there is no language at all (a plain ``` fence).
+ */
+export function codeLabel(info: string): string {
+  const trimmed = info.trim()
+  if (!trimmed) return ''
+  const space = trimmed.indexOf(' ')
+  return space === -1 ? trimmed : trimmed.slice(space + 1).trim()
+}
 
 function slugify(text: string): string {
   return text
@@ -43,17 +57,23 @@ export async function createRenderer(shikiTheme: ShikiTheme): Promise<MarkdownIt
   md.use(await Shiki({ theme: shikiTheme as never }))
 
   // Intercept ```mermaid fences: emit the pre-rendered diagram stashed in env by
-  // convert(); everything else goes to Shiki. Keeps async diagram rendering out
-  // of the synchronous render pass.
+  // convert(); everything else goes to Shiki, wrapped in a code-card with a
+  // header bar carrying the language/title label (a stable theme hook).
   const shikiFence = md.renderer.rules.fence!
   md.renderer.rules.fence = (tokens, idx, options, env, self) => {
-    if (tokens[idx].info.trim() === 'mermaid') {
+    const info = tokens[idx].info
+    if (info.trim() === 'mermaid') {
       const e = env as { mermaid?: string[]; mermaidIndex?: number }
       const i = e.mermaidIndex ?? 0
       e.mermaidIndex = i + 1
       return e.mermaid?.[i] ?? mermaidFallbackHtml(tokens[idx].content)
     }
-    return shikiFence(tokens, idx, options, env, self)
+    const pre = shikiFence(tokens, idx, options, env, self)
+    const label = codeLabel(info)
+    const header = label
+      ? `<div class="code-card-header">${escapeHtml(label)}</div>\n`
+      : ''
+    return `<div class="code-card">\n${header}${pre}</div>\n`
   }
 
   md.renderer.rules.table_open = () => '<div class="table-wrap">\n<table>\n'

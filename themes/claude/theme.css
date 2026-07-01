@@ -1,343 +1,355 @@
-/* Claude theme — Warm Serif Essay
-   Ivory background, ink text, clay-orange accent, serif throughout.
-   Everything is drawn from one warm, earthy palette so code blocks,
-   callouts, and icons all feel native to the page — a printed-book feel.
-   Code uses a custom warm "parchment" Shiki theme (see code-theme.json). */
+/* Claude theme — platform.claude.com docs look.
+   Cool near-white page, sans-serif body with serif headings, ink text with
+   faint-underline links, blue accent reserved for inline code and the Note
+   callout. Code lives in a white card with a header bar (language label).
+   Callouts are fully-bordered 0.5px rounded boxes with a lucide-style icon.
+   Light syntax palette is GitHub-light (see code-theme.json). */
 :root {
-  --bg: #faf9f5;
-  --ink: #2b2a26;
-  --muted: #6b655c;
-  --accent: #cc785c;
-  --accent-strong: #a64f34;
-  --rule: #e7e0d2;
-  --tint: #f3ede1;
-  --code-inline-bg: #efe9df;
-  --heading-ink: #1a1915;
-  --callout-border: rgba(120, 95, 70, 0.12);
-  --callout-note-edge: #b0a48f;
-  --callout-note-bg: #f2ede1;
-  --callout-note-title: #7a6f5b;
-  --callout-tip-edge: #8a9a6e;
-  --callout-tip-bg: #eef1e4;
-  --callout-tip-title: #5f6f43;
-  --callout-important-edge: #79a59c;
-  --callout-important-bg: #e9efec;
-  --callout-important-title: #3f6f66;
-  --callout-warning-edge: #cda14e;
-  --callout-warning-bg: #f7efda;
-  --callout-warning-title: #936c1f;
-  --callout-caution-edge: #b14a38;
-  --callout-caution-bg: #f4e3de;
-  --callout-caution-title: #9a2f23;
-  --table-head-bg: #f7f3ea;
-  --row-hover: rgba(0, 0, 0, 0.02);
-  --checkbox-border: #c3b8a0;
-  --checkbox-face: #fbf7ee;
+  --bg: #fcfcfb;
+  --ink: #0b0b0b;
+  --ink-soft: #52514e;
+  --muted: #89847a;
+  --rule: rgba(11, 11, 11, 0.1);
+  --rule-strong: rgba(11, 11, 11, 0.2);
+  --accent: #256bc1;
+  --accent-soft: #184e95;
+  --link-underline: rgba(11, 11, 11, 0.32);
+
+  --card-bg: #ffffff;
+  --code-inline-bg: #f6f6f4;
+  --code-inline-ink: #52514e;
+
+  --callout-icon-color: #5a564e;
+  --callout-note-edge: #256bc1;
+  --callout-note-bg: #eef2f9;
+  --callout-tip-edge: #4a7a1e;
+  --callout-tip-bg: #eef4e2;
+  --callout-important-edge: #6b4ea8;
+  --callout-important-bg: #f1edf8;
+  --callout-warning-edge: #b07816;
+  --callout-warning-bg: #fbf3e2;
+  --callout-caution-edge: #c0392b;
+  --callout-caution-bg: #fbeeec;
+
+  --table-head-rule: var(--rule-strong);
+  --row-hover: rgba(11, 11, 11, 0.025);
+  --checkbox-border: rgba(11, 11, 11, 0.28);
+  --checkbox-face: #ffffff;
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
 body.theme-claude {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 18px/1.75 Georgia, 'Iowan Old Style', 'Tiempos Text', 'Times New Roman', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'STSong', SimSun, serif;
+  font: 16px/1.65 anthropicSans, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 .theme-claude .md-content {
-  max-width: 64ch;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 4rem 1.5rem 6rem;
+  padding: 3.5rem 2rem 6rem;
 }
 
-.theme-claude .md-header { margin-bottom: 2.5rem; }
+.theme-claude .md-header { margin-bottom: 2rem; }
 .theme-claude .md-header h1 { margin: 0; }
 
+/* Serif headings (anthropicSerif), medium weight, near-black. The docs run a
+   tight type scale; h2 is the largest in-body heading. */
 .theme-claude h1, .theme-claude h2, .theme-claude h3,
 .theme-claude h4, .theme-claude h5, .theme-claude h6 {
-  font-family: Georgia, 'Tiempos Headline', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'STSong', SimSun, serif;
+  font-family: anthropicSerif, Georgia, 'Times New Roman', Times, 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', serif;
+  color: var(--ink);
+  font-weight: 500;
   line-height: 1.25;
-  color: var(--heading-ink);
-  letter-spacing: -0.01em;
+  letter-spacing: normal;
   margin: 2.4rem 0 1rem;
   text-wrap: balance;
 }
-.theme-claude h1 { font-size: 2.4rem; font-weight: 600; }
-.theme-claude h2 { font-size: 1.8rem; font-weight: 600; border-bottom: 1px solid var(--rule); padding-bottom: 0.35rem; }
-.theme-claude h3 { font-size: 1.4rem; font-weight: 600; }
-.theme-claude h4 { font-size: 1.15rem; font-weight: 700; }
-.theme-claude p { margin: 1.1rem 0; text-wrap: pretty; }
+.theme-claude h1 { font-size: 2.1rem; margin-top: 0; }
+.theme-claude h2 {
+  font-size: 1.55rem;
+  margin-top: 3rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 0.5px solid var(--rule);
+}
+.theme-claude h3 { font-size: 1.25rem; font-weight: 550; }
+.theme-claude h4 { font-size: 1.05rem; font-weight: 600; }
+.theme-claude h5 { font-size: 0.95rem; font-weight: 600; }
+.theme-claude h6 { font-size: 0.85rem; font-weight: 600; color: var(--ink-soft); }
 
+.theme-claude p { margin: 1rem 0; text-wrap: pretty; }
+.theme-claude strong { font-weight: 600; }
+
+/* Links: ink-colored with a faint underline that strengthens on hover — the
+   docs reserve the blue accent for code/notes, not body links. */
 .theme-claude a {
-  color: var(--accent-strong);
+  color: var(--ink-soft);
   text-decoration: underline;
+  text-decoration-color: var(--link-underline);
   text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s ease, color 0.15s ease;
 }
-.theme-claude a:hover { color: var(--accent-strong); text-decoration-thickness: 2px; }
+.theme-claude a:hover {
+  color: var(--ink);
+  text-decoration-color: currentColor;
+}
 
+/* Inline code: cool blue ink on a soft blue-grey wash, generously rounded. */
 .theme-claude code {
-  font-family: ui-monospace, 'SF Mono', 'Menlo', monospace;
-  font-size: 0.88em;
+  font-family: anthropicMono, ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.875em;
   background: var(--code-inline-bg);
-  color: var(--accent-strong);
-  padding: 0.12em 0.4em;
-  border-radius: 5px;
+  color: var(--code-inline-ink);
+  padding: 0.14em 0.45em;
+  border-radius: 7px;
 }
 
-/* A warm parchment panel — a shade deeper than the page, not a dark slab.
-   Background/foreground come from the custom Shiki theme (code-theme.json). */
-.theme-claude pre.shiki {
-  margin: 1.6rem 0;
-  padding: 1.15rem 1.35rem;
+/* Code card: a white panel with a header bar carrying the language label.
+   The converter emits <pre class="shiki"> with transparent token bg; the card
+   chrome (background, border, radius, header) is supplied here. */
+.theme-claude .code-card {
+  margin: 1.5rem 0;
+  background: var(--card-bg);
+  border: 0.5px solid var(--rule);
   border-radius: 10px;
+  overflow: hidden;
+}
+.theme-claude .code-card-header {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 1rem;
+  border-bottom: 0.5px solid var(--rule);
+  font-family: anthropicMono, ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+.theme-claude pre.shiki {
+  margin: 0;
+  padding: 1rem 1.15rem;
   overflow-x: auto;
-  font-size: 0.84rem;
-  line-height: 1.65;
-  border: 1px solid var(--rule);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  background: transparent;
 }
 .theme-claude pre.shiki code {
   background: none;
   color: inherit;
   padding: 0;
   font-size: inherit;
+  font-family: anthropicMono, ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 }
 
 .theme-claude blockquote {
-  margin: 1.6rem 0;
-  padding: 0.2rem 0 0.2rem 1.3rem;
-  border-left: 3px solid var(--rule);
-  color: var(--muted);
+  margin: 1.5rem 0;
+  padding: 0.1rem 0 0.1rem 1.15rem;
+  border-left: 2px solid var(--rule-strong);
+  color: var(--ink-soft);
   font-style: italic;
 }
 
+/* Callouts: fully-bordered 0.5px rounded boxes with a soft tinted fill — the
+   docs style (not a left-rail bar). Each type gets a hue on its border + fill
+   and a matching lucide-style line icon. The Note is the canonical blue. */
 .theme-claude .callout {
-  margin: 1.6rem 0;
-  padding: 0.95rem 1.2rem;
+  margin: 1.5rem 0;
+  padding: 0.85rem 1rem;
   border-radius: 10px;
-  border: 1px solid var(--callout-border);
-  border-left: 3px solid var(--accent);
-  background: var(--tint);
+  border: 0.5px solid var(--callout-note-edge);
+  background: var(--callout-note-bg);
 }
+.theme-claude .callout > :first-child { margin-top: 0; }
+.theme-claude .callout > :last-child { margin-bottom: 0; }
 .theme-claude .callout-title {
   display: flex;
   align-items: center;
-  gap: 0.5em;
-  margin: 0 0 0.35rem;
-  font-family: Georgia, serif;
-  font-weight: 700;
+  gap: 0.55em;
+  margin: 0 0 0.4rem;
+  font-weight: 600;
   font-style: normal;
   font-size: 0.95rem;
-  letter-spacing: 0.01em;
+  color: var(--ink);
 }
-.theme-claude .callout > :last-child { margin-bottom: 0; }
 
-/* Icons sit in a soft "chip" — a circular wash of the callout's own hue
-   (via color-mix on currentColor), so each icon reads as a deliberate,
-   theme-native mark rather than a stray UI stroke. The icon glyph itself
-   is masked in the title color; the theme owns the art. */
+/* The icon is a masked line-glyph in the callout's edge color; no chip. */
 .theme-claude .callout-icon {
   flex: none;
-  display: inline-grid;
-  place-items: center;
-  width: 1.7em;
-  height: 1.7em;
-  border-radius: 50%;
-  background: color-mix(in srgb, currentColor 16%, transparent);
-}
-.theme-claude .callout-icon::before {
-  content: "";
-  width: 0.95em;
-  height: 0.95em;
+  width: 1.1em;
+  height: 1.1em;
   background-color: currentColor;
   -webkit-mask: var(--callout-icon) center / contain no-repeat;
   mask: var(--callout-icon) center / contain no-repeat;
 }
 
-/* Warm, earthy family — distinct but unmistakably the same palette. */
-.theme-claude .callout-note { border-left-color: var(--callout-note-edge); background: var(--callout-note-bg); }
-.theme-claude .callout-tip { border-left-color: var(--callout-tip-edge); background: var(--callout-tip-bg); }
-.theme-claude .callout-important { border-left-color: var(--callout-important-edge); background: var(--callout-important-bg); }
-.theme-claude .callout-warning { border-left-color: var(--callout-warning-edge); background: var(--callout-warning-bg); }
-.theme-claude .callout-caution { border-left-color: var(--callout-caution-edge); background: var(--callout-caution-bg); }
-.theme-claude .callout-note .callout-title { color: var(--callout-note-title); }
-.theme-claude .callout-tip .callout-title { color: var(--callout-tip-title); }
-.theme-claude .callout-important .callout-title { color: var(--callout-important-title); }
-.theme-claude .callout-warning .callout-title { color: var(--callout-warning-title); }
-.theme-claude .callout-caution .callout-title { color: var(--callout-caution-title); }
+.theme-claude .callout-note { border-color: var(--callout-note-edge); background: var(--callout-note-bg); }
+.theme-claude .callout-tip { border-color: var(--callout-tip-edge); background: var(--callout-tip-bg); }
+.theme-claude .callout-important { border-color: var(--callout-important-edge); background: var(--callout-important-bg); }
+.theme-claude .callout-warning { border-color: var(--callout-warning-edge); background: var(--callout-warning-bg); }
+.theme-claude .callout-caution { border-color: var(--callout-caution-edge); background: var(--callout-caution-bg); }
+.theme-claude .callout-note .callout-icon { color: var(--callout-note-edge); }
+.theme-claude .callout-tip .callout-icon { color: var(--callout-tip-edge); }
+.theme-claude .callout-important .callout-icon { color: var(--callout-important-edge); }
+.theme-claude .callout-warning .callout-icon { color: var(--callout-warning-edge); }
+.theme-claude .callout-caution .callout-icon { color: var(--callout-caution-edge); }
 
 .theme-claude .callout-note .callout-icon {
-  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cline x1='12' y1='11' x2='12' y2='16'/%3E%3Cline x1='12' y1='8' x2='12' y2='8'/%3E%3C/svg%3E");
+  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E");
 }
 .theme-claude .callout-tip .callout-icon {
-  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6'/%3E%3Cpath d='M10 21h4'/%3E%3Cpath d='M12 3a6 6 0 0 0-3.6 10.8c.5.4.9 1 1 1.7h5.2c.1-.7.5-1.3 1-1.7A6 6 0 0 0 12 3z'/%3E%3C/svg%3E");
+  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6'/%3E%3Cpath d='M10 22h4'/%3E%3Cpath d='M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14'/%3E%3C/svg%3E");
 }
 .theme-claude .callout-important .callout-icon {
-  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8-4.3-4.1 5.9-.9z'/%3E%3C/svg%3E");
+  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7.9 20A9 9 0 1 0 4 16.1L2 22z'/%3E%3Cpath d='M12 8v4'/%3E%3Cpath d='M12 16h.01'/%3E%3C/svg%3E");
 }
 .theme-claude .callout-warning .callout-icon {
-  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4 3 19h18z'/%3E%3Cline x1='12' y1='10' x2='12' y2='14'/%3E%3Cline x1='12' y1='17' x2='12' y2='17'/%3E%3C/svg%3E");
+  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
 }
 .theme-claude .callout-caution .callout-icon {
-  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8.5 3h7L21 8.5v7L15.5 21h-7L3 15.5v-7z'/%3E%3Cline x1='12' y1='8' x2='12' y2='13'/%3E%3Cline x1='12' y1='16' x2='12' y2='16'/%3E%3C/svg%3E");
+  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m15 9-6 6'/%3E%3Cpath d='m9 9 6 6'/%3E%3C/svg%3E");
 }
 
-.theme-claude .table-wrap { margin: 1.6rem 0; overflow-x: auto; }
+/* Tables: no outer frame, hairline row rules, a stronger rule under the head.
+   Header cells are weighted, not filled — the docs keep tables airy. */
+.theme-claude .table-wrap { margin: 1.5rem 0; overflow-x: auto; }
 .theme-claude table {
   width: 100%;
   border-collapse: collapse;
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 .theme-claude th, .theme-claude td {
   text-align: left;
-  padding: 0.5rem 0.8rem;
-  border-bottom: 1px solid var(--rule);
+  padding: 0.5rem 1rem 0.5rem 0;
+  border-bottom: 0.5px solid var(--rule);
+  vertical-align: top;
 }
-.theme-claude th { font-family: Georgia, serif; }
 .theme-claude thead th {
-  background: var(--table-head-bg);
-  border-bottom: 2px solid var(--rule);
+  font-weight: 600;
+  border-bottom: 1px solid var(--table-head-rule);
+  padding-top: 0;
 }
 .theme-claude tbody tr:hover { background: var(--row-hover); }
+.theme-claude tbody tr:last-child td { border-bottom: none; }
 
 .theme-claude ul, .theme-claude ol { padding-left: 1.4rem; }
-.theme-claude li { margin: 0.35rem 0; }
-.theme-claude .task-list-item { list-style: none; margin: 0.8rem 0; }
+.theme-claude li { margin: 0.3rem 0; }
+.theme-claude li::marker { color: var(--muted); }
+.theme-claude .task-list-item { list-style: none; margin: 0.55rem 0; }
 .theme-claude .task-list-item input {
   appearance: none;
   -webkit-appearance: none;
-  width: 1.4em;
-  height: 1.4em;
-  margin: 0 0.85em 0 -2.25em;
-  vertical-align: -0.34em;
-  border: 1.5px solid var(--checkbox-border);
-  border-radius: 6px;
+  width: 1.15em;
+  height: 1.15em;
+  margin: 0 0.7em 0 -1.95em;
+  vertical-align: -0.2em;
+  border: 1.4px solid var(--checkbox-border);
+  border-radius: 5px;
   background: var(--checkbox-face);
   position: relative;
 }
 .theme-claude .task-list-item input:checked {
   background: var(--accent);
-  border-color: var(--accent-strong);
+  border-color: var(--accent);
 }
-/* A checkmark SVG centered at ~60% of the box, so it keeps even padding
-   from every edge (a CSS-border check is hard to inset cleanly). */
 .theme-claude .task-list-item input:checked::after {
   content: "";
   position: absolute;
   inset: 0;
   background-color: var(--checkbox-face);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l3.6 3.6L18 7.5'/%3E%3C/svg%3E") center / 0.68em no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l3.6 3.6L18 7.5'/%3E%3C/svg%3E") center / 0.68em no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l3.6 3.6L18 7.5'/%3E%3C/svg%3E") center / 0.62em no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l3.6 3.6L18 7.5'/%3E%3C/svg%3E") center / 0.62em no-repeat;
 }
 
 .theme-claude img { max-width: 100%; height: auto; border-radius: 8px; }
-.theme-claude hr { border: none; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+.theme-claude hr { border: none; border-top: 0.5px solid var(--rule); margin: 2.5rem 0; }
 .theme-claude hr:has(+ h2) {
   border-top-color: transparent;
-  margin: 3rem 0 0.35rem;
+  margin: 3rem 0 0;
 }
 .theme-claude hr + h2 { margin-top: 0; }
 
 .theme-claude .footnote-ref a {
-  font-size: 0.82em;
+  font-size: 0.8em;
   text-decoration: none;
-  color: var(--accent-strong);
+  color: var(--accent-soft);
   padding: 0 0.1em;
 }
 .theme-claude .footnote-ref a:hover { text-decoration: underline; }
-
 .theme-claude .footnotes {
   margin-top: 3rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--rule);
+  border-top: 0.5px solid var(--rule);
   font-size: 0.9rem;
-  color: var(--muted);
+  color: var(--ink-soft);
 }
 
-/* Math (KaTeX via markdown-it-texmath). The converter emits <eq> for inline
-   math and <section><eqn>…</eqn></section> for display math; KaTeX owns the
-   glyph metrics. The theme only sets color, spacing, and overflow. */
+/* Math (KaTeX). The converter owns glyph metrics; the theme sets color/flow. */
 .theme-claude eq { color: inherit; }
-.theme-claude .katex { color: inherit; font-size: 1.05em; }
-.theme-claude section > eqn {
-  display: block;
-  margin: 1.6rem 0;
-}
+.theme-claude .katex { color: inherit; font-size: 1.03em; }
+.theme-claude section > eqn { display: block; margin: 1.5rem 0; }
 .theme-claude .katex-display {
-  margin: 0;               /* spacing comes from the <eqn> wrapper */
-  overflow-x: auto;        /* wide equations scroll instead of overflowing the page */
+  margin: 0;
+  overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.25rem 0;      /* room for the scrollbar without clipping glyphs */
+  padding: 0.25rem 0;
 }
 
-/* Chinese / CJK typography. Applied only when the document language is Chinese
-   (the converter sets <html lang="zh"> from frontmatter or auto-detection). The
-   CJK serif fonts live in the global font stacks above; these rules tune the
-   reading experience for Chinese prose: justified text, a narrower measure
-   (~36 full-width chars/line), more leading, and correct line-breaking. */
-.theme-claude:lang(zh) { line-height: 1.85; line-break: strict; }
-.theme-claude:lang(zh) .md-content { max-width: 36em; }
+/* Chinese / CJK typography — applied only when <html lang="zh">. Sans body
+   keeps a slightly looser leading; prose is justified at a comfortable measure.
+   Serif headings stay (anthropicSerif falls back to a CJK serif). */
+.theme-claude:lang(zh) { line-height: 1.8; line-break: strict; }
+.theme-claude:lang(zh) .md-content { max-width: 44em; }
 .theme-claude:lang(zh) p,
 .theme-claude:lang(zh) li { text-align: justify; }
-/* Chinese has no italic tradition; the Latin blockquote italic renders as a
-   synthetic slant on CJK, so keep Chinese blockquotes upright. */
 .theme-claude:lang(zh) blockquote { font-style: normal; }
-.theme-claude:lang(zh) h1, .theme-claude:lang(zh) h2, .theme-claude:lang(zh) h3,
-.theme-claude:lang(zh) h4, .theme-claude:lang(zh) h5, .theme-claude:lang(zh) h6 {
-  letter-spacing: normal;
-}
 
-/* Smooth in-page jumps for TOC links; offset so anchored headings aren't clipped. */
-html { scroll-behavior: smooth; }
+/* Table of contents. Mobile-first calm panel; on wide screens a sticky
+   side-rail pulled into the left gutter. Zero JS for layout. */
 .theme-claude h1, .theme-claude h2, .theme-claude h3,
 .theme-claude h4, .theme-claude h5, .theme-claude h6 { scroll-margin-top: 2rem; }
-
-/* Table of contents. The converter emits a nav.toc element after the header.
-   Mobile-first: a calm "Contents" panel. On wide screens it becomes a sticky
-   side-rail pulled into the left gutter. Zero JS. */
 .theme-claude .toc {
   margin: 0 0 2.5rem;
-  padding: 1.1rem 1.4rem;
-  border: 1px solid var(--rule);
+  padding: 1rem 1.2rem;
+  border: 0.5px solid var(--rule);
   border-radius: 10px;
-  background: var(--tint);
+  background: var(--card-bg);
   font-size: 0.9rem;
   line-height: 1.45;
 }
 .theme-claude .toc-title {
-  margin: 0 0 0.8rem;
-  font-family: Georgia, 'Tiempos Headline', serif;
-  font-weight: 700;
-  font-size: 0.78rem;
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+  font-size: 0.74rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
 .theme-claude .toc ul { list-style: none; margin: 0; padding-left: 0; }
-.theme-claude .toc ul ul {
-  margin: 0.45rem 0 0.1rem;
-  padding-left: 0.9em;
-}
-.theme-claude .toc li { margin: 0.55rem 0; }
-.theme-claude .toc ul ul li { margin: 0.4rem 0; }
+.theme-claude .toc ul ul { margin: 0.4rem 0 0.1rem; padding-left: 0.85em; }
+.theme-claude .toc li { margin: 0.5rem 0; }
+.theme-claude .toc ul ul li { margin: 0.38rem 0; }
 .theme-claude .toc a {
   display: block;
-  padding: 0.22rem 0.55rem;
+  padding: 0.2rem 0.55rem;
   color: var(--muted);
   text-decoration: none;
-  border-radius: 999px;
+  border-radius: 8px;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 .theme-claude .toc ul ul a { font-size: 0.95em; }
 .theme-claude .toc a:hover,
-.theme-claude .toc a:focus-visible,
+.theme-claude .toc a:focus-visible {
+  color: var(--ink-soft);
+}
 .theme-claude .toc a[aria-current="location"] {
-  color: var(--accent-strong);
-  background: color-mix(in srgb, var(--muted) 10%, transparent);
+  color: var(--ink);
+  font-weight: 550;
 }
 
 @media (min-width: 1400px) {
@@ -345,8 +357,8 @@ html { scroll-behavior: smooth; }
     float: left;
     position: sticky;
     top: 2rem;
-    width: 220px;
-    margin-left: -340px;
+    width: 230px;
+    margin-left: -330px;
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
     padding: 0;
@@ -357,10 +369,7 @@ html { scroll-behavior: smooth; }
     line-height: 1.5;
   }
   .theme-claude .toc-title { padding: 0 0.55rem; }
-  .theme-claude .toc ul ul {
-    margin: 0.35rem 0 0.05rem;
-    padding-left: 0.55rem;
-  }
+  .theme-claude .toc ul ul { margin: 0.35rem 0 0.05rem; padding-left: 0.55rem; }
   .theme-claude .toc li { margin: 0.3rem 0; }
   .theme-claude .toc ul ul li { margin: 0.25rem 0; }
   .theme-claude .toc a {
@@ -370,9 +379,7 @@ html { scroll-behavior: smooth; }
   }
 }
 
-/* Diagrams (Mermaid). The converter emits <figure class="mermaid"> with inline
-   SVG (colors come from the theme's mermaid manifest config), or a
-   <figure class="mermaid-fallback"> source block when rendering isn't possible. */
+/* Diagrams (Mermaid). Inline SVG, or a dashed source-fallback card. */
 .theme-claude figure.mermaid,
 .theme-claude figure.mermaid-fallback {
   margin: 1.8rem 0;
@@ -380,17 +387,15 @@ html { scroll-behavior: smooth; }
   overflow-x: auto;
 }
 .theme-claude figure.mermaid svg { max-width: 100%; height: auto; }
-.theme-claude figure.mermaid-fallback {
-  text-align: left;
-}
+.theme-claude figure.mermaid-fallback { text-align: left; }
 .theme-claude figure.mermaid-fallback pre {
   margin: 0;
-  padding: 1.15rem 1.35rem;
+  padding: 1rem 1.15rem;
   border-radius: 10px;
-  border: 1px dashed var(--rule);
-  background: var(--tint);
+  border: 0.5px dashed var(--rule-strong);
+  background: var(--card-bg);
   overflow-x: auto;
-  font-size: 0.84rem;
+  font-size: 0.85rem;
 }
 .theme-claude figure.mermaid-fallback::after {
   content: "Diagram not rendered — showing source.";

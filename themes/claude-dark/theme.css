@@ -1,33 +1,37 @@
-/* Claude Dark — a warm dark sibling of the Claude essay theme. Inherits all of
-   Claude's structure via `extends`; this file only re-paints the palette. */
+/* Claude Dark — a cool dark sibling of the Claude docs theme. Inherits all of
+   Claude's structure via `extends`; this file only re-paints the palette to a
+   dark, near-neutral docs look (slate page, white-on-dark code cards, bordered
+   callouts keyed to the same hues as light). Code palette is dark-plus
+   (code-theme.json); the card supplies the panel background. */
 :root {
-  --bg: #1b1916;
-  --ink: #e6e1d6;
-  --muted: #9c9486;
-  --accent: #e0926d;
-  --accent-strong: #eba883;
-  --rule: #38332c;
-  --tint: #25221d;
-  --code-inline-bg: #2c2820;
-  --heading-ink: #f4f0e7;
-  --callout-border: rgba(255, 245, 230, 0.10);
-  --callout-note-edge: #9a8e78;
-  --callout-note-bg: #262420;
-  --callout-note-title: #cbc1ab;
-  --callout-tip-edge: #8a9a6e;
-  --callout-tip-bg: #21251c;
-  --callout-tip-title: #b3c393;
-  --callout-important-edge: #6fa097;
-  --callout-important-bg: #1d2624;
-  --callout-important-title: #93c7bd;
+  --bg: #15171a;
+  --ink: #e6e8eb;
+  --ink-soft: #b3b8bf;
+  --muted: #8a9099;
+  --rule: rgba(230, 232, 235, 0.12);
+  --rule-strong: rgba(230, 232, 235, 0.22);
+  --accent: #6ea8e6;
+  --accent-soft: #9cc4f0;
+  --link-underline: rgba(230, 232, 235, 0.3);
+
+  --card-bg: #1c1f23;
+  --code-inline-bg: #23282e;
+  --code-inline-ink: #9cc4f0;
+
+  --callout-icon-color: #b3b8bf;
+  --callout-note-edge: #4a86c5;
+  --callout-note-bg: #182433;
+  --callout-tip-edge: #6f9f4a;
+  --callout-tip-bg: #1a2417;
+  --callout-important-edge: #9b7fd4;
+  --callout-important-bg: #221d33;
   --callout-warning-edge: #cda14e;
   --callout-warning-bg: #2a2417;
-  --callout-warning-title: #d9b873;
-  --callout-caution-edge: #c4584a;
+  --callout-caution-edge: #d4584a;
   --callout-caution-bg: #2a1d1a;
-  --callout-caution-title: #e0998c;
-  --table-head-bg: #25221d;
-  --row-hover: rgba(255, 255, 255, 0.04);
-  --checkbox-border: #4a443a;
-  --checkbox-face: #1b1916;
+
+  --table-head-rule: var(--rule-strong);
+  --row-hover: rgba(230, 232, 235, 0.04);
+  --checkbox-border: rgba(230, 232, 235, 0.3);
+  --checkbox-face: #1c1f23;
 }

@@ -53,14 +53,36 @@ function insertTocAfterLeadingH1(bodyHtml: string, toc: string): string {
 
 const tocStateScript = `<script>
 (() => {
-  const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+  const nav = document.querySelector('.toc');
+  if (!nav) return;
+  const links = Array.from(nav.querySelectorAll('a[href^="#"]'));
   if (links.length === 0) return;
   const entries = links
     .map((link) => ({ link, target: document.getElementById(decodeURIComponent(link.hash.slice(1))) }))
     .filter((entry) => entry.target);
+  let activeLink = null;
+  // Keep the active link visible inside the TOC's own scroll box (the sticky
+  // side-rail). Only nudges when the rail actually scrolls internally and the
+  // link is out of view, so it never fights the page scroll on mobile.
+  const reveal = (link) => {
+    if (nav.scrollHeight <= nav.clientHeight + 1) return;
+    const navRect = nav.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    if (linkRect.top < navRect.top) {
+      nav.scrollTop += linkRect.top - navRect.top - 8;
+    } else if (linkRect.bottom > navRect.bottom) {
+      nav.scrollTop += linkRect.bottom - navRect.bottom + 8;
+    }
+  };
   const activate = (entry) => {
-    links.forEach((link) => link.removeAttribute('aria-current'));
-    entry?.link.setAttribute('aria-current', 'location');
+    const link = entry?.link ?? null;
+    if (link === activeLink) return;
+    links.forEach((l) => l.removeAttribute('aria-current'));
+    if (link) {
+      link.setAttribute('aria-current', 'location');
+      reveal(link);
+    }
+    activeLink = link;
   };
   const currentEntry = () => {
     let current = entries[0];

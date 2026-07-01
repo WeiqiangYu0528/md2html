@@ -1,26 +1,26 @@
 {
   "name": "claude-dark",
-  "description": "Warm Serif Essay — dark.",
+  "description": "Anthropic docs theme — dark. Cool slate page, serif headings on a sans body, dark code cards, bordered callouts.",
   "extends": "claude",
   "shikiThemeFile": "code-theme.json",
   "fonts": [],
   "mermaid": {
-    "theme": "base",
+    "theme": "dark",
     "themeVariables": {
-      "fontFamily": "Georgia, 'Iowan Old Style', serif",
-      "primaryColor": "#25221d",
-      "primaryTextColor": "#e6e1d6",
-      "primaryBorderColor": "#e0926d",
-      "secondaryColor": "#21251c",
-      "tertiaryColor": "#1b1916",
-      "lineColor": "#eba883",
-      "textColor": "#e6e1d6",
-      "mainBkg": "#25221d",
-      "nodeBorder": "#e0926d",
-      "clusterBkg": "#1f1c18",
+      "fontFamily": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+      "primaryColor": "#182433",
+      "primaryTextColor": "#e6e8eb",
+      "primaryBorderColor": "#4a86c5",
+      "secondaryColor": "#1a2417",
+      "tertiaryColor": "#1c1f23",
+      "lineColor": "#9cc4f0",
+      "textColor": "#e6e8eb",
+      "mainBkg": "#182433",
+      "nodeBorder": "#4a86c5",
+      "clusterBkg": "#1c1f23",
       "clusterBorder": "#38332c",
       "noteBkgColor": "#2a2417",
-      "noteTextColor": "#e6e1d6"
+      "noteTextColor": "#e6e8eb"
     }
   }
 }
