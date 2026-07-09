@@ -54,7 +54,10 @@ export async function createRenderer(shikiTheme: ShikiTheme): Promise<MarkdownIt
     katexOptions: { throwOnError: false },
   })
   // Shiki accepts either a theme name or a raw theme object.
-  md.use(await Shiki({ theme: shikiTheme as never }))
+  // fallbackLanguage: an unrecognized fence language (e.g. ```mtail) degrades to
+  // plain text instead of throwing and aborting the whole conversion. 'text' is a
+  // Shiki special-cased plain language (not in the bundled-language type), hence the cast.
+  md.use(await Shiki({ theme: shikiTheme as never, fallbackLanguage: 'text' as never }))
 
   // Intercept ```mermaid fences: emit the pre-rendered diagram stashed in env by
   // convert(); everything else goes to Shiki, wrapped in a code-card with a
