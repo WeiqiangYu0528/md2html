@@ -108,6 +108,35 @@ describe('cli run()', () => {
     const html = readFileSync(input.replace(/\.md$/, '.html'), 'utf8')
     expect(html).toContain('class="mermaid-fallback"')
   })
+
+  it('rejects an invalid --toc value with exit 1', async () => {
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const input = tmpFile('bad.md', '# x\n\n## a\n\n## b\n\n## c')
+    expect(await run([input, '--toc', 'bogus'])).toBe(1)
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('auto'))
+  })
+
+  it('--toc none omits the TOC even with many headings', async () => {
+    const input = tmpFile('n.md', '# Doc\n\n## A\n\n## B\n\n## C\n\ntext')
+    expect(await run([input, '--toc', 'none'])).toBe(0)
+    const html = readFileSync(input.replace(/\.md$/, '.html'), 'utf8')
+    expect(html).not.toContain('<nav class="toc"')
+  })
+
+  it('--toc sidebar forces the TOC and adds the sidebar body class', async () => {
+    const input = tmpFile('sb.md', '# Doc\n\n## Only\n\ntext')
+    expect(await run([input, '--toc', 'sidebar'])).toBe(0)
+    const html = readFileSync(input.replace(/\.md$/, '.html'), 'utf8')
+    expect(html).toContain('<nav class="toc"')
+    expect(html).toContain('toc-sidebar')
+  })
+
+  it('--toc topbar adds the topbar body class', async () => {
+    const input = tmpFile('tb.md', '# Doc\n\n## Only\n\ntext')
+    expect(await run([input, '--toc', 'topbar'])).toBe(0)
+    const html = readFileSync(input.replace(/\.md$/, '.html'), 'utf8')
+    expect(html).toContain('toc-topbar')
+  })
 })
 
 describe('cli run() — folder input', () => {
