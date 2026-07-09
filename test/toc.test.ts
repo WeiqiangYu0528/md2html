@@ -74,3 +74,37 @@ describe('buildToc trigger', () => {
     expect(buildToc(parse('Just text.'), { lang: 'en', toc: true })).toBe('')
   })
 })
+
+describe('buildToc tocMode', () => {
+  const parse = (src: string) => md.parse(src, {})
+
+  it('mode "none" suppresses even with many headings', () => {
+    expect(buildToc(parse('## A\n\n## B\n\n## C'), { lang: 'en', tocMode: 'none' })).toBe('')
+  })
+
+  it('mode "sidebar" forces a TOC with a single heading', () => {
+    expect(buildToc(parse('## Only'), { lang: 'en', tocMode: 'sidebar' })).toContain('<nav class="toc"')
+  })
+
+  it('mode "topbar" forces a TOC with a single heading', () => {
+    expect(buildToc(parse('## Only'), { lang: 'en', tocMode: 'topbar' })).toContain('<nav class="toc"')
+  })
+
+  it('mode "sidebar"/"topbar" overrides frontmatter toc:false (CLI wins)', () => {
+    expect(buildToc(parse('## A\n\n## B\n\n## C'), { lang: 'en', toc: false, tocMode: 'sidebar' }))
+      .toContain('<nav class="toc"')
+  })
+
+  it('mode "auto" defers to frontmatter toc:false', () => {
+    expect(buildToc(parse('## A\n\n## B\n\n## C'), { lang: 'en', toc: false, tocMode: 'auto' })).toBe('')
+  })
+
+  it('mode "auto" keeps the >=3 heading threshold', () => {
+    expect(buildToc(parse('## A\n\n## B'), { lang: 'en', tocMode: 'auto' })).toBe('')
+    expect(buildToc(parse('## A\n\n## B\n\n## C'), { lang: 'en', tocMode: 'auto' })).toContain('<nav class="toc"')
+  })
+
+  it('forced modes still emit nothing when there are no headings', () => {
+    expect(buildToc(parse('Just text.'), { lang: 'en', tocMode: 'sidebar' })).toBe('')
+  })
+})

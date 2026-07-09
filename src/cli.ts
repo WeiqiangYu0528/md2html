@@ -4,7 +4,7 @@ import { parseArgs } from 'node:util'
 import { pathToFileURL } from 'node:url'
 import { convert } from './convert'
 import { loadTheme, listThemes } from './themes'
-import type { Theme } from './types'
+import type { Theme, TocMode } from './types'
 import { assembleDocument } from './assemble'
 import { buildFontFaceCss } from './fonts'
 import { buildKatexCss } from './math/katex-css'
@@ -22,6 +22,7 @@ Options:
   -o, --output <path>   Output file (single input) or output directory (folder input).
                         Defaults to alongside each source file.
       --theme <name>    Theme to use (default: gpt)
+      --toc <mode>      TOC placement: auto | sidebar | topbar | none (default: auto)
       --embed-fonts     Inline the theme's fonts into the HTML
       --list-themes     List available themes and exit
   -h, --help            Show this help
@@ -36,6 +37,7 @@ export async function run(argv: string[]): Promise<number> {
       allowPositionals: true,
       options: {
         theme: { type: 'string', default: 'gpt' },
+        toc: { type: 'string', default: 'auto' },
         output: { type: 'string', short: 'o' },
         'embed-fonts': { type: 'boolean', default: false },
         'list-themes': { type: 'boolean', default: false },
@@ -46,6 +48,13 @@ export async function run(argv: string[]): Promise<number> {
     positionals = parsed.positionals
   } catch (err) {
     process.stderr.write(`Error: ${(err as Error).message}\n`)
+    return 1
+  }
+
+  const TOC_MODES: readonly TocMode[] = ['auto', 'sidebar', 'topbar', 'none']
+  const tocMode = values.toc as string
+  if (!TOC_MODES.includes(tocMode as TocMode)) {
+    process.stderr.write(`Error: invalid --toc value "${tocMode}". Expected one of: ${TOC_MODES.join(', ')}\n`)
     return 1
   }
 
@@ -82,13 +91,13 @@ export async function run(argv: string[]): Promise<number> {
   }
 
   if (stats.isDirectory()) {
-    return runDirectory(inputPath, values.output as string | undefined, theme, embedFonts)
+    return runDirectory(inputPath, values.output as string | undefined, theme, embedFonts, tocMode as TocMode)
   }
 
   // Single-file mode: the converted set is just this file, so cross-file .md
   // links are never rewritten (a link to another file has no .html to point to).
   const convertedSet = new Set([resolve(inputPath)])
-  return runSingle(inputPath, values.output as string | undefined, theme, embedFonts, convertedSet)
+  return runSingle(inputPath, values.output as string | undefined, theme, embedFonts, convertedSet, tocMode as TocMode)
 }
 
 /** Convert one Markdown file, writing the HTML to outputPath. Returns 0 on success. */
@@ -98,6 +107,7 @@ async function runSingle(
   theme: Theme,
   embedFonts: boolean,
   convertedSet: Set<string>,
+  tocMode: TocMode,
 ): Promise<number> {
   let raw: string
   try {
@@ -108,7 +118,7 @@ async function runSingle(
   }
 
   const outputPath = output ?? resolve(inputPath.replace(MD_EXT, '') + '.html')
-  const html = await renderMarkdown(raw, inputPath, theme, embedFonts, convertedSet)
+  const html = await renderMarkdown(raw, inputPath, theme, embedFonts, convertedSet, tocMode)
   try {
     writeFileSync(outputPath, html, 'utf8')
   } catch (err) {
@@ -130,6 +140,7 @@ async function runDirectory(
   output: string | undefined,
   theme: Theme,
   embedFonts: boolean,
+  tocMode: TocMode,
 ): Promise<number> {
   const root = resolve(inputDir)
   const outRoot = output ? resolve(output) : root
@@ -154,7 +165,7 @@ async function runDirectory(
       continue
     }
     const outputPath = join(outRoot, relative(root, file).replace(MD_EXT, '') + '.html')
-    const html = await renderMarkdown(raw, file, theme, embedFonts, convertedSet)
+    const html = await renderMarkdown(raw, file, theme, embedFonts, convertedSet, tocMode)
     try {
       mkdirSync(dirname(outputPath), { recursive: true })
       writeFileSync(outputPath, html, 'utf8')
@@ -193,8 +204,9 @@ async function renderMarkdown(
   theme: Theme,
   embedFonts: boolean,
   convertedSet: Set<string>,
+  tocMode: TocMode,
 ): Promise<string> {
-  const { metadata, bodyHtml: rawBody, hasMath, lang, toc, warnings } = await convert(raw, theme.shikiTheme, theme.mermaid ?? {})
+  const { metadata, bodyHtml: rawBody, hasMath, lang, toc, warnings } = await convert(raw, theme.shikiTheme, theme.mermaid ?? {}, tocMode)
   const bodyHtml = rewriteInternalLinks(rawBody, resolve(inputPath), convertedSet)
   const fmTitle = typeof metadata.title === 'string' ? metadata.title : undefined
   const title = fmTitle ?? basename(inputPath, extname(inputPath))
@@ -209,7 +221,7 @@ async function renderMarkdown(
     process.stderr.write(`${warning}\n`)
   }
 
-  return assembleDocument({ title, headerTitle: fmTitle, bodyHtml, theme, fontFaceCss, katexCss, lang, toc })
+  return assembleDocument({ title, headerTitle: fmTitle, bodyHtml, theme, fontFaceCss, katexCss, lang, toc, tocMode })
 }
 
 // Auto-run only when executed directly (not when imported by tests).

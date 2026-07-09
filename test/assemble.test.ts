@@ -85,4 +85,20 @@ describe('assembleDocument', () => {
     const html = assembleDocument({ title: 'T', bodyHtml: '', theme: t })
     expect(html).toContain('<body class="theme-claude">')
   })
+
+  it('adds no toc placement class for auto/none/omitted', () => {
+    expect(assembleDocument({ title: 'T', bodyHtml: '', theme }))
+      .toContain('<body class="theme-claude">')
+    expect(assembleDocument({ title: 'T', bodyHtml: '', theme, tocMode: 'auto' }))
+      .toContain('<body class="theme-claude">')
+    expect(assembleDocument({ title: 'T', bodyHtml: '', theme, tocMode: 'none' }))
+      .toContain('<body class="theme-claude">')
+  })
+
+  it('adds toc-sidebar / toc-topbar body class for those modes', () => {
+    expect(assembleDocument({ title: 'T', bodyHtml: '', theme, tocMode: 'sidebar' }))
+      .toContain('<body class="theme-claude toc-sidebar">')
+    expect(assembleDocument({ title: 'T', bodyHtml: '', theme, tocMode: 'topbar' }))
+      .toContain('<body class="theme-claude toc-topbar">')
+  })
 })

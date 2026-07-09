@@ -37,7 +37,7 @@ describe('themes', () => {
   it('uses a wide concise desktop gutter before truncating claude TOC side-rail links', () => {
     const css = loadTheme('claude').css
     expect(css).toContain('@media (min-width: 1400px)')
-    expect(css).toContain('@media (min-width: 1400px) {\n  .theme-claude .toc {')
+    expect(css).toContain('@media (min-width: 1400px) {\n  .theme-claude:not(.toc-topbar):not(.toc-sidebar) .toc {')
     expect(css).toContain('width: 230px;')
     expect(css).toContain('margin-left: -330px;')
     expect(css).toContain('border: none;')
@@ -104,7 +104,7 @@ describe('themes', () => {
   it('uses a wide concise desktop gutter before truncating gpt TOC side-rail links', () => {
     const css = loadTheme('gpt').css
     expect(css).toContain('@media (min-width: 1400px)')
-    expect(css).toContain('@media (min-width: 1400px) {\n  .theme-gpt .toc {')
+    expect(css).toContain('@media (min-width: 1400px) {\n  .theme-gpt:not(.toc-topbar):not(.toc-sidebar) .toc {')
     expect(css).toContain('width: 244px;')
     expect(css).toContain('margin-left: -344px;')
     expect(css).toContain('border: none;')
