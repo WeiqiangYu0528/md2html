@@ -67,6 +67,14 @@ describe('convert', () => {
     const { toc } = await convert('---\ntoc: false\n---\n## A\n\n## B\n\n## C', 'vitesse-dark')
     expect(toc).toBe('')
   })
+
+  it('tocMode "none" suppresses the TOC; "sidebar" forces it', async () => {
+    const src = '## A\n\n## B\n\n## C\n\ntext'
+    const none = await convert(src, 'vitesse-dark', {}, 'none')
+    expect(none.toc).toBe('')
+    const forced = await convert('## Only\n\ntext', 'vitesse-dark', {}, 'sidebar')
+    expect(forced.toc).toContain('<nav class="toc"')
+  })
 })
 
 describe('convert mermaid diagrams', () => {

@@ -3,7 +3,7 @@ import { detectLang } from './lang'
 import { createRenderer } from './markdown/renderer'
 import { renderMermaid, mermaidFallbackHtml } from './mermaid/render'
 import { buildToc } from './toc'
-import type { ShikiTheme } from './types'
+import type { ShikiTheme, TocMode } from './types'
 
 export interface ConvertResult {
   metadata: Record<string, unknown>
@@ -27,6 +27,7 @@ export async function convert(
   raw: string,
   shikiTheme: ShikiTheme,
   mermaidConfig: Record<string, unknown> = {},
+  tocMode: TocMode = 'auto',
 ): Promise<ConvertResult> {
   const { metadata, content } = parseFrontmatter(raw)
   const md = await createRenderer(shikiTheme)
@@ -60,6 +61,6 @@ export async function convert(
   // reliable, cheap signal that the KaTeX stylesheet needs to be inlined.
   const hasMath = bodyHtml.includes('<eq>') || bodyHtml.includes('<eqn>')
   const lang = detectLang(content, metadata)
-  const toc = buildToc(tokens, { lang, toc: metadata.toc })
+  const toc = buildToc(tokens, { lang, toc: metadata.toc, tocMode })
   return { metadata, bodyHtml, hasMath, lang, toc, warnings }
 }
