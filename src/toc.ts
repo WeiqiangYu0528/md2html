@@ -1,5 +1,6 @@
 import type Token from 'markdown-it/lib/token.mjs'
 import { escapeHtml } from './escape'
+import type { TocMode } from './types'
 
 export interface Heading {
   level: number
@@ -54,16 +55,29 @@ export function renderToc(headings: Heading[], lang: string): string {
 }
 
 /**
- * Build the TOC nav for a parsed document, applying the trigger rules:
- * `toc: false` suppresses; `toc: true` forces (when there is ≥1 heading);
- * otherwise a TOC appears only with 3+ headings.
+ * Build the TOC nav for a parsed document.
+ *
+ * `tocMode` (from the CLI `--toc` flag) takes precedence over frontmatter:
+ * - 'none'               → never emit a TOC.
+ * - 'sidebar' | 'topbar' → force a TOC whenever there is >=1 heading.
+ * - 'auto' (or omitted)  → defer to frontmatter `toc`: `false` suppresses,
+ *                          `true` forces, otherwise a TOC appears only with
+ *                          3+ headings.
+ * The nav markup is identical in every case; placement is a theme concern.
  */
-export function buildToc(tokens: Token[], opts: { lang: string; toc?: unknown }): string {
-  if (opts.toc === false) return ''
+export function buildToc(
+  tokens: Token[],
+  opts: { lang: string; toc?: unknown; tocMode?: TocMode },
+): string {
+  const mode = opts.tocMode ?? 'auto'
+  if (mode === 'none') return ''
   const headings = collectHeadings(tokens)
   if (headings.length === 0) return ''
-  const force = opts.toc === true
-  if (!force && headings.length < 3) return ''
+  const forced = mode === 'sidebar' || mode === 'topbar'
+  if (!forced) {
+    if (opts.toc === false) return ''
+    if (opts.toc !== true && headings.length < 3) return ''
+  }
   return renderToc(headings, opts.lang)
 }
 
