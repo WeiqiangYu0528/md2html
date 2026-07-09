@@ -20,3 +20,6 @@ export interface Theme {
   /** Body scope class (CSS selector prefix). A theme that `extends` another uses the base's. */
   scopeClass?: string
 }
+
+/** Table-of-contents placement mode, chosen via the CLI `--toc` flag. */
+export type TocMode = 'auto' | 'sidebar' | 'topbar' | 'none'
