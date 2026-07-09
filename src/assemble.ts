@@ -1,4 +1,4 @@
-import type { Theme } from './types'
+import type { Theme, TocMode } from './types'
 import { escapeHtml } from './escape'
 
 export interface AssembleInput {
@@ -15,16 +15,21 @@ export interface AssembleInput {
   lang?: string
   /** Table-of-contents nav HTML, injected after the header (default ""). */
   toc?: string
+  /** TOC placement mode; adds a body-class hook for the theme (default "auto"). */
+  tocMode?: TocMode
 }
 
 export function assembleDocument(input: AssembleInput): string {
-  const { title, bodyHtml, theme, headerTitle, fontFaceCss = '', katexCss = '', lang = 'en', toc = '' } = input
+  const { title, bodyHtml, theme, headerTitle, fontFaceCss = '', katexCss = '', lang = 'en', toc = '', tocMode = 'auto' } = input
   const header = headerTitle
     ? `<header class="md-header"><h1>${escapeHtml(headerTitle)}</h1></header>\n`
     : ''
   const content = header
     ? `${header}${toc}${bodyHtml}`
     : insertTocAfterLeadingH1(bodyHtml, toc)
+  const scope = theme.scopeClass ?? theme.name
+  const placementClass = tocMode === 'sidebar' ? ' toc-sidebar' : tocMode === 'topbar' ? ' toc-topbar' : ''
+  const bodyClass = `theme-${scope}${placementClass}`
   return `<!DOCTYPE html>
 <html lang="${escapeHtml(lang)}">
 <head>
@@ -35,7 +40,7 @@ export function assembleDocument(input: AssembleInput): string {
 ${fontFaceCss}${fontFaceCss ? '\n' : ''}${katexCss}${katexCss ? '\n' : ''}${theme.css}
 </style>
 </head>
-<body class="theme-${theme.scopeClass ?? theme.name}">
+<body class="${bodyClass}">
 <article class="md-content">
 ${content}
 </article>
