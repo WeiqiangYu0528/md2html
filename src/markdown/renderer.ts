@@ -48,10 +48,13 @@ export async function createRenderer(shikiTheme: ShikiTheme): Promise<MarkdownIt
   // Math: texmath handles delimiters, KaTeX renders to static HTML at build time.
   // 'dollars' → $…$ and $$…$$; 'brackets' → \(…\) and \[…\]. throwOnError:false
   // means a malformed formula renders flagged instead of crashing conversion.
+  // strict:'ignore' silences KaTeX's per-character warnings for CJK text used as
+  // formula variables (common in Chinese docs, e.g. $$可用性 = \frac{a}{b}$$),
+  // which are noise, not errors — the formula still renders correctly.
   md.use(texmath, {
     engine: katex,
     delimiters: ['dollars', 'brackets'],
-    katexOptions: { throwOnError: false },
+    katexOptions: { throwOnError: false, strict: 'ignore' },
   })
   // Shiki accepts either a theme name or a raw theme object.
   // fallbackLanguage: an unrecognized fence language (e.g. ```mtail) degrades to
