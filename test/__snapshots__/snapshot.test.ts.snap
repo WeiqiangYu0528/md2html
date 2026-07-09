@@ -362,31 +362,22 @@ body.theme-claude {
   font-weight: 550;
 }
 
+/* Floated sticky side-rail — see gpt theme for the mode rationale. */
 @media (min-width: 1400px) {
-  .theme-claude .toc {
-    float: left;
-    position: sticky;
-    top: 2rem;
-    width: 230px;
-    margin-left: -330px;
-    max-height: calc(100vh - 4rem);
-    overflow-y: auto;
-    padding: 0;
-    border: none;
-    border-radius: 0;
-    background: none;
-    font-size: 0.82rem;
-    line-height: 1.5;
-  }
-  .theme-claude .toc-title { padding: 0 0.55rem; }
-  .theme-claude .toc ul ul { margin: 0.35rem 0 0.05rem; padding-left: 0.55rem; }
-  .theme-claude .toc li { margin: 0.3rem 0; }
-  .theme-claude .toc ul ul li { margin: 0.25rem 0; }
-  .theme-claude .toc a {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .theme-claude:not(.toc-topbar):not(.toc-sidebar) .toc { float: left; position: sticky; top: 2rem; width: 230px; margin-left: -330px; max-height: calc(100vh - 4rem); overflow-y: auto; padding: 0; border: none; border-radius: 0; background: none; font-size: 0.82rem; line-height: 1.5; }
+  .theme-claude:not(.toc-topbar):not(.toc-sidebar) .toc-title { padding: 0 0.55rem; }
+  .theme-claude:not(.toc-topbar):not(.toc-sidebar) .toc ul ul { margin: 0.35rem 0 0.05rem; padding-left: 0.55rem; }
+  .theme-claude:not(.toc-topbar):not(.toc-sidebar) .toc li { margin: 0.3rem 0; }
+  .theme-claude:not(.toc-topbar):not(.toc-sidebar) .toc ul ul li { margin: 0.25rem 0; }
+  .theme-claude:not(.toc-topbar):not(.toc-sidebar) .toc a { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (min-width: 1000px) {
+  .theme-claude.toc-sidebar .toc { float: left; position: sticky; top: 2rem; width: 230px; margin-left: -330px; max-height: calc(100vh - 4rem); overflow-y: auto; padding: 0; border: none; border-radius: 0; background: none; font-size: 0.82rem; line-height: 1.5; }
+  .theme-claude.toc-sidebar .toc-title { padding: 0 0.55rem; }
+  .theme-claude.toc-sidebar .toc ul ul { margin: 0.35rem 0 0.05rem; padding-left: 0.55rem; }
+  .theme-claude.toc-sidebar .toc li { margin: 0.3rem 0; }
+  .theme-claude.toc-sidebar .toc ul ul li { margin: 0.25rem 0; }
+  .theme-claude.toc-sidebar .toc a { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 
 /* Diagrams (Mermaid). Inline SVG, or a dashed source-fallback card. */
