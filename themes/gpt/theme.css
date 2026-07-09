@@ -334,34 +334,26 @@ body.theme-gpt {
   background: var(--surface);
 }
 
+/* Floated sticky side-rail. Applies to:
+   - auto mode (no placement class) at >=1400px, and
+   - explicit .toc-sidebar at >=1000px (lower threshold, opt-in).
+   Below its threshold each falls back to the default top-card form above.
+   .toc-topbar is deliberately excluded so it always stays a card. */
 @media (min-width: 1400px) {
-  .theme-gpt .toc {
-    float: left;
-    position: sticky;
-    top: 2rem;
-    width: 244px;
-    margin-left: -344px;
-    max-height: calc(100vh - 4rem);
-    overflow-y: auto;
-    padding: 0;
-    border: none;
-    border-radius: 0;
-    background: none;
-    font-size: 0.82rem;
-    line-height: 1.5;
-  }
-  .theme-gpt .toc-title { padding: 0 0.55rem; }
-  .theme-gpt .toc ul ul {
-    margin: 0.35rem 0 0.05rem;
-    padding-left: 0.55rem;
-  }
-  .theme-gpt .toc li { margin: 0.3rem 0; }
-  .theme-gpt .toc ul ul li { margin: 0.25rem 0; }
-  .theme-gpt .toc a {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .theme-gpt:not(.toc-topbar):not(.toc-sidebar) .toc { float: left; position: sticky; top: 2rem; width: 244px; margin-left: -344px; max-height: calc(100vh - 4rem); overflow-y: auto; padding: 0; border: none; border-radius: 0; background: none; font-size: 0.82rem; line-height: 1.5; }
+  .theme-gpt:not(.toc-topbar):not(.toc-sidebar) .toc-title { padding: 0 0.55rem; }
+  .theme-gpt:not(.toc-topbar):not(.toc-sidebar) .toc ul ul { margin: 0.35rem 0 0.05rem; padding-left: 0.55rem; }
+  .theme-gpt:not(.toc-topbar):not(.toc-sidebar) .toc li { margin: 0.3rem 0; }
+  .theme-gpt:not(.toc-topbar):not(.toc-sidebar) .toc ul ul li { margin: 0.25rem 0; }
+  .theme-gpt:not(.toc-topbar):not(.toc-sidebar) .toc a { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (min-width: 1000px) {
+  .theme-gpt.toc-sidebar .toc { float: left; position: sticky; top: 2rem; width: 244px; margin-left: -344px; max-height: calc(100vh - 4rem); overflow-y: auto; padding: 0; border: none; border-radius: 0; background: none; font-size: 0.82rem; line-height: 1.5; }
+  .theme-gpt.toc-sidebar .toc-title { padding: 0 0.55rem; }
+  .theme-gpt.toc-sidebar .toc ul ul { margin: 0.35rem 0 0.05rem; padding-left: 0.55rem; }
+  .theme-gpt.toc-sidebar .toc li { margin: 0.3rem 0; }
+  .theme-gpt.toc-sidebar .toc ul ul li { margin: 0.25rem 0; }
+  .theme-gpt.toc-sidebar .toc a { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 
 .theme-gpt figure.mermaid,
