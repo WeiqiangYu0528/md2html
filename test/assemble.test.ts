@@ -101,4 +101,26 @@ describe('assembleDocument', () => {
     expect(assembleDocument({ title: 'T', bodyHtml: '', theme, tocMode: 'topbar' }))
       .toContain('<body class="theme-claude toc-topbar">')
   })
+
+  it('injects a media lightbox when the document has images', () => {
+    const html = assembleDocument({ title: 'T', bodyHtml: '<p><img src="a.png" alt="A"></p>', theme })
+
+    expect(html).toContain('.media-lightbox')
+    expect(html).toContain('data-media-lightbox')
+    expect(html).toContain('article.querySelectorAll(\'img, figure.mermaid svg\')')
+  })
+
+  it('injects a media lightbox when the document has Mermaid diagrams', () => {
+    const html = assembleDocument({ title: 'T', bodyHtml: '<figure class="mermaid"><svg></svg></figure>', theme })
+
+    expect(html).toContain('.media-lightbox')
+    expect(html).toContain('figure.mermaid svg')
+  })
+
+  it('omits the media lightbox when the document has no images or Mermaid diagrams', () => {
+    const html = assembleDocument({ title: 'T', bodyHtml: '<p>Only text</p>', theme })
+
+    expect(html).not.toContain('.media-lightbox')
+    expect(html).not.toContain('data-media-lightbox')
+  })
 })

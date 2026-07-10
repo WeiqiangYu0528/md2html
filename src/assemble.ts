@@ -30,6 +30,7 @@ export function assembleDocument(input: AssembleInput): string {
   const scope = theme.scopeClass ?? theme.name
   const placementClass = tocMode === 'sidebar' ? ' toc-sidebar' : tocMode === 'topbar' ? ' toc-topbar' : ''
   const bodyClass = `theme-${scope}${placementClass}`
+  const hasMediaLightbox = /<img\b/i.test(bodyHtml) || /<figure\b[^>]*class="[^"]*\bmermaid\b/i.test(bodyHtml)
   return `<!DOCTYPE html>
 <html lang="${escapeHtml(lang)}">
 <head>
@@ -37,14 +38,14 @@ export function assembleDocument(input: AssembleInput): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(title)}</title>
 <style>
-${fontFaceCss}${fontFaceCss ? '\n' : ''}${katexCss}${katexCss ? '\n' : ''}${theme.css}
+${fontFaceCss}${fontFaceCss ? '\n' : ''}${katexCss}${katexCss ? '\n' : ''}${theme.css}${hasMediaLightbox ? `\n${mediaLightboxCss}` : ''}
 </style>
 </head>
 <body class="${bodyClass}">
 <article class="md-content">
 ${content}
 </article>
-${toc ? tocStateScript : ''}</body>
+${hasMediaLightbox ? mediaLightboxScript : ''}${toc ? tocStateScript : ''}</body>
 </html>
 `
 }
@@ -55,6 +56,128 @@ function insertTocAfterLeadingH1(bodyHtml: string, toc: string): string {
   if (!leadingH1) return `${toc}${bodyHtml}`
   return `${leadingH1[1]}${toc}${bodyHtml.slice(leadingH1[1].length)}`
 }
+
+const mediaLightboxCss = `.media-lightbox-trigger { cursor: zoom-in; }
+.media-lightbox-trigger:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.media-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.72);
+}
+.media-lightbox[hidden] { display: none; }
+.media-lightbox-panel {
+  position: relative;
+  max-width: min(96vw, 1400px);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 12px;
+  background: var(--card-bg, #fff);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  padding: 1rem;
+}
+.media-lightbox-content img,
+.media-lightbox-content svg {
+  display: block;
+  max-width: min(92vw, 1320px);
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+}
+.media-lightbox-content svg { min-width: min(92vw, 960px); }
+.media-lightbox-close {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.55rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+  font: 1.4rem/1 system-ui, sans-serif;
+  cursor: pointer;
+}`
+
+const mediaLightboxScript = `<script>
+(() => {
+  const article = document.querySelector('.md-content');
+  if (!article) return;
+  const media = Array.from(article.querySelectorAll('img, figure.mermaid svg'))
+    .filter((el) => !el.closest('a'));
+  if (media.length === 0) return;
+
+  const lightbox = document.createElement('div');
+  lightbox.className = 'media-lightbox';
+  lightbox.setAttribute('data-media-lightbox', '');
+  lightbox.hidden = true;
+
+  const panel = document.createElement('div');
+  panel.className = 'media-lightbox-panel';
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', 'Expanded media');
+
+  const closeButton = document.createElement('button');
+  closeButton.className = 'media-lightbox-close';
+  closeButton.type = 'button';
+  closeButton.setAttribute('aria-label', 'Close expanded media');
+  closeButton.textContent = '×';
+
+  const content = document.createElement('div');
+  content.className = 'media-lightbox-content';
+
+  panel.append(closeButton, content);
+  lightbox.append(panel);
+  document.body.appendChild(lightbox);
+
+  let previousFocus = null;
+
+  const close = () => {
+    lightbox.hidden = true;
+    content.replaceChildren();
+    previousFocus?.focus?.();
+  };
+
+  const open = (source) => {
+    previousFocus = document.activeElement;
+    const clone = source.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.removeAttribute('tabindex');
+    clone.classList.remove('media-lightbox-trigger');
+    content.replaceChildren(clone);
+    lightbox.hidden = false;
+    closeButton.focus();
+  };
+
+  media.forEach((el) => {
+    el.classList.add('media-lightbox-trigger');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', el instanceof HTMLImageElement ? 'Open image' + (el.alt ? ': ' + el.alt : '') : 'Open diagram');
+    el.addEventListener('click', () => open(el));
+    el.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        open(el);
+      }
+    });
+  });
+
+  closeButton.addEventListener('click', close);
+  lightbox.addEventListener('click', (event) => {
+    if (event.target === lightbox) close();
+  });
+  panel.addEventListener('click', (event) => event.stopPropagation());
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !lightbox.hidden) close();
+  });
+})();
+</script>
+`
 
 const tocStateScript = `<script>
 (() => {
