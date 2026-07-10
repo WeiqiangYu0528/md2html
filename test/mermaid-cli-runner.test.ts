@@ -18,6 +18,8 @@ describe('Mermaid CLI runner helpers', () => {
       '/tmp/config.json',
       '-I',
       'md2html-mermaid-0',
+      '-b',
+      'transparent',
     ])
   })
 })

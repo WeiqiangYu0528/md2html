@@ -14,7 +14,7 @@ export function resolveMmdcCli(): string {
 }
 
 export function buildMmdcArgs(cliPath: string, inputPath: string, outputPath: string, configPath: string, svgId: string): string[] {
-  return [cliPath, '-i', inputPath, '-o', outputPath, '-c', configPath, '-I', svgId]
+  return [cliPath, '-i', inputPath, '-o', outputPath, '-c', configPath, '-I', svgId, '-b', 'transparent']
 }
 
 export function runMermaidCli(inputPath: string, outputPath: string, configPath: string, svgId: string): Promise<MermaidCliResult> {
