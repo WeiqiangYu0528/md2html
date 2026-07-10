@@ -378,6 +378,19 @@ body.theme-claude {
   overflow-x: auto;
 }
 .theme-claude figure.mermaid svg { max-width: 100%; height: auto; }
+.theme-claude figure.mermaid svg foreignObject,
+.theme-claude figure.mermaid svg foreignObject * {
+  box-sizing: content-box;
+}
+.theme-claude figure.mermaid svg foreignObject .nodeLabel,
+.theme-claude figure.mermaid svg foreignObject p,
+.theme-claude figure.mermaid svg foreignObject li {
+  margin: 0;
+  line-height: normal;
+  line-break: auto;
+  text-align: inherit;
+  text-wrap: initial;
+}
 .theme-claude figure.mermaid-fallback { text-align: left; }
 .theme-claude figure.mermaid-fallback pre {
   margin: 0;

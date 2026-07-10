@@ -363,6 +363,19 @@ body.theme-gpt {
   overflow-x: auto;
 }
 .theme-gpt figure.mermaid svg { max-width: 100%; height: auto; }
+.theme-gpt figure.mermaid svg foreignObject,
+.theme-gpt figure.mermaid svg foreignObject * {
+  box-sizing: content-box;
+}
+.theme-gpt figure.mermaid svg foreignObject .nodeLabel,
+.theme-gpt figure.mermaid svg foreignObject p,
+.theme-gpt figure.mermaid svg foreignObject li {
+  margin: 0;
+  line-height: normal;
+  line-break: auto;
+  text-align: inherit;
+  text-wrap: initial;
+}
 .theme-gpt figure.mermaid-fallback { text-align: left; }
 .theme-gpt figure.mermaid-fallback pre {
   margin: 0;

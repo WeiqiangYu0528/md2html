@@ -31,6 +31,7 @@ describe('themes', () => {
   it('loads the claude theme mermaid config from the manifest', () => {
     const theme = loadTheme('claude')
     expect(theme.mermaid).toBeTypeOf('object')
+    expect((theme.mermaid as Record<string, unknown>).htmlLabels).toBe(false)
     expect((theme.mermaid as Record<string, unknown>).themeVariables).toBeTypeOf('object')
   })
 
@@ -76,6 +77,7 @@ describe('themes', () => {
     expect(theme.css.indexOf('--bg: #fcfcfb')).toBeLessThan(theme.css.indexOf('--bg: #15171a')) // light first, dark wins
     expect(theme.shikiTheme).toBeTypeOf('object')             // own dark code palette
     expect(theme.mermaid).toBeTypeOf('object')                // own dark mermaid config
+    expect((theme.mermaid as Record<string, unknown>).htmlLabels).toBe(false)
   })
 
   it('lists gpt', () => {
@@ -98,7 +100,21 @@ describe('themes', () => {
     expect(custom.colors).toBeTypeOf('object')
     expect(Array.isArray(custom.tokenColors)).toBe(true)
     expect(theme.mermaid).toBeTypeOf('object')
+    expect((theme.mermaid as Record<string, unknown>).htmlLabels).toBe(false)
     expect((theme.mermaid as Record<string, unknown>).themeVariables).toBeTypeOf('object')
+    expect(theme.css).toContain(`.theme-gpt figure.mermaid svg foreignObject,
+.theme-gpt figure.mermaid svg foreignObject * {
+  box-sizing: content-box;
+}`)
+    expect(theme.css).toContain(`.theme-gpt figure.mermaid svg foreignObject .nodeLabel,
+.theme-gpt figure.mermaid svg foreignObject p,
+.theme-gpt figure.mermaid svg foreignObject li {
+  margin: 0;
+  line-height: normal;
+  line-break: auto;
+  text-align: inherit;
+  text-wrap: initial;
+}`)
   })
 
   it('uses a wide concise desktop gutter before truncating gpt TOC side-rail links', () => {

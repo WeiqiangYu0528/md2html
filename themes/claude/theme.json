@@ -5,6 +5,7 @@
   "fonts": [],
   "mermaid": {
     "theme": "base",
+    "htmlLabels": false,
     "themeVariables": {
       "fontFamily": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
       "primaryColor": "#eef2f9",

@@ -20,6 +20,21 @@ describe('full pipeline', () => {
       theme,
       toc,
     })
+    expect(html).toContain('.theme-claude figure.mermaid svg { max-width: 100%; height: auto; }')
+    expect(html).toContain(`.theme-claude figure.mermaid svg foreignObject,
+.theme-claude figure.mermaid svg foreignObject * {
+  box-sizing: content-box;
+}`)
+    expect(html).toContain(`.theme-claude figure.mermaid svg foreignObject .nodeLabel,
+.theme-claude figure.mermaid svg foreignObject p,
+.theme-claude figure.mermaid svg foreignObject li {
+  margin: 0;
+  line-height: normal;
+  line-break: auto;
+  text-align: inherit;
+  text-wrap: initial;
+}`)
+    expect(html).not.toContain('min-width: min(100%, 56rem);')
     expect(html).toMatchSnapshot()
   })
 })
