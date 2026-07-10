@@ -16,11 +16,13 @@ const USAGE = `md2html — render Markdown to a self-contained, beautiful HTML f
 
 Usage:
   md2html <input.md> [options]
-  md2html <folder> [options]    Convert every .md/.markdown under <folder> recursively
+  md2html <a.md> <b.md> ... [options]   Convert several files at once
+  md2html <folder> [options]            Convert every .md/.markdown under <folder> recursively
 
 Options:
-  -o, --output <path>   Output file (single input) or output directory (folder input).
-                        Defaults to alongside each source file.
+  -o, --output <path>   Output file (single file input) or output directory
+                        (multiple inputs / folder input). Defaults to alongside
+                        each source file.
       --theme <name>    Theme to use (default: gpt)
       --toc <mode>      TOC placement: auto | sidebar | topbar | none (default: auto)
       --embed-fonts     Inline the theme's fonts into the HTML
@@ -67,7 +69,7 @@ export async function run(argv: string[]): Promise<number> {
     return values.help ? 0 : 1
   }
 
-  const inputPath = positionals[0]
+  const inputPaths = positionals
 
   let theme
   try {
@@ -77,109 +79,93 @@ export async function run(argv: string[]): Promise<number> {
     return 1
   }
 
-  let stats
-  try {
-    stats = statSync(inputPath)
-  } catch {
-    process.stderr.write(`Error: cannot read input "${inputPath}"\n`)
-    return 1
-  }
-
   const embedFonts = values['embed-fonts'] as boolean
   if (embedFonts && theme.fonts.length === 0) {
     process.stderr.write(`Warning: theme "${theme.name}" has no embeddable fonts; using system fonts.\n`)
   }
 
-  if (stats.isDirectory()) {
-    return runDirectory(inputPath, values.output as string | undefined, theme, embedFonts, tocMode as TocMode)
+  // Expand each input into its source files. A directory contributes every
+  // Markdown file beneath it (mirroring root = the directory); a plain file
+  // contributes itself (mirroring root = its parent, so it lands alongside).
+  let sawDirectory = false
+  const sources: { file: string; root: string }[] = []
+  for (const inputPath of inputPaths) {
+    let stats
+    try {
+      stats = statSync(inputPath)
+    } catch {
+      process.stderr.write(`Error: cannot read input "${inputPath}"\n`)
+      return 1
+    }
+    if (stats.isDirectory()) {
+      sawDirectory = true
+      const root = resolve(inputPath)
+      const files = collectMarkdown(root)
+      if (files.length === 0) {
+        process.stderr.write(`Error: no .md or .markdown files found under "${inputPath}"\n`)
+        return 1
+      }
+      for (const file of files) sources.push({ file, root })
+    } else {
+      const file = resolve(inputPath)
+      sources.push({ file, root: dirname(file) })
+    }
   }
 
-  // Single-file mode: the converted set is just this file, so cross-file .md
-  // links are never rewritten (a link to another file has no .html to point to).
-  const convertedSet = new Set([resolve(inputPath)])
-  return runSingle(inputPath, values.output as string | undefined, theme, embedFonts, convertedSet, tocMode as TocMode)
+  // The converted set spans every source, so cross-file .md links between the
+  // listed inputs are rewritten. A lone file maps only to itself, so its links
+  // to unlisted files stay untouched (nothing to point them at).
+  const convertedSet = new Set(sources.map((s) => s.file))
+  const output = values.output as string | undefined
+  // --output names a file only for a single plain-file input; otherwise it is
+  // an output directory (mirroring each source under it).
+  const singleFile = inputPaths.length === 1 && !sawDirectory
+
+  let failures = 0
+  for (const { file, root } of sources) {
+    const outputPath = singleFile && output
+      ? resolve(output)
+      : join(output ? resolve(output) : root, relative(root, file).replace(MD_EXT, '') + '.html')
+    if (!(await convertFile(file, outputPath, theme, embedFonts, convertedSet, tocMode as TocMode))) {
+      failures++
+    }
+  }
+
+  if (sources.length > 1) {
+    const converted = sources.length - failures
+    process.stdout.write(`Converted ${converted}/${sources.length} file(s) with theme "${theme.name}".\n`)
+  }
+  return failures > 0 ? 1 : 0
 }
 
-/** Convert one Markdown file, writing the HTML to outputPath. Returns 0 on success. */
-async function runSingle(
+/** Convert one Markdown file, writing the HTML to outputPath. Returns true on success. */
+async function convertFile(
   inputPath: string,
-  output: string | undefined,
+  outputPath: string,
   theme: Theme,
   embedFonts: boolean,
   convertedSet: Set<string>,
   tocMode: TocMode,
-): Promise<number> {
+): Promise<boolean> {
   let raw: string
   try {
     raw = readFileSync(inputPath, 'utf8')
   } catch {
     process.stderr.write(`Error: cannot read input file "${inputPath}"\n`)
-    return 1
+    return false
   }
 
-  const outputPath = output ?? resolve(inputPath.replace(MD_EXT, '') + '.html')
   const html = await renderMarkdown(raw, inputPath, theme, embedFonts, convertedSet, tocMode)
   try {
+    mkdirSync(dirname(outputPath), { recursive: true })
     writeFileSync(outputPath, html, 'utf8')
   } catch (err) {
     process.stderr.write(`Error: cannot write output file "${outputPath}": ${(err as Error).message}\n`)
-    return 1
+    return false
   }
 
   process.stdout.write(`Wrote ${outputPath}\n`)
-  return 0
-}
-
-/**
- * Convert every .md/.markdown under inputDir recursively. The output tree mirrors
- * the source tree: a file at <inputDir>/sub/a.md becomes <outDir>/sub/a.html, where
- * outDir is --output (created if needed) or inputDir itself when --output is absent.
- */
-async function runDirectory(
-  inputDir: string,
-  output: string | undefined,
-  theme: Theme,
-  embedFonts: boolean,
-  tocMode: TocMode,
-): Promise<number> {
-  const root = resolve(inputDir)
-  const outRoot = output ? resolve(output) : root
-  const files = collectMarkdown(root)
-  // collectMarkdown already returns absolute paths (join on a resolved root),
-  // so this set matches what rewriteInternalLinks resolves link targets to.
-  const convertedSet = new Set(files)
-
-  if (files.length === 0) {
-    process.stderr.write(`Error: no .md or .markdown files found under "${inputDir}"\n`)
-    return 1
-  }
-
-  let failures = 0
-  for (const file of files) {
-    let raw: string
-    try {
-      raw = readFileSync(file, 'utf8')
-    } catch {
-      process.stderr.write(`Error: cannot read input file "${file}"\n`)
-      failures++
-      continue
-    }
-    const outputPath = join(outRoot, relative(root, file).replace(MD_EXT, '') + '.html')
-    const html = await renderMarkdown(raw, file, theme, embedFonts, convertedSet, tocMode)
-    try {
-      mkdirSync(dirname(outputPath), { recursive: true })
-      writeFileSync(outputPath, html, 'utf8')
-    } catch (err) {
-      process.stderr.write(`Error: cannot write output file "${outputPath}": ${(err as Error).message}\n`)
-      failures++
-      continue
-    }
-    process.stdout.write(`Wrote ${outputPath}\n`)
-  }
-
-  const converted = files.length - failures
-  process.stdout.write(`Converted ${converted}/${files.length} file(s) with theme "${theme.name}".\n`)
-  return failures > 0 ? 1 : 0
+  return true
 }
 
 /** Recursively collect Markdown file paths under dir, skipping dotfolders. */

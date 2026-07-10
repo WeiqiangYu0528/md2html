@@ -139,6 +139,59 @@ describe('cli run()', () => {
   })
 })
 
+describe('cli run() — multiple file inputs', () => {
+  function tmpFiles(...contents: string[]): string[] {
+    const dir = mkdtempSync(join(tmpdir(), 'md2html-multi-'))
+    return contents.map((content, i) => {
+      const p = join(dir, `f${i + 1}.md`)
+      writeFileSync(p, content)
+      return p
+    })
+  }
+
+  it('converts every listed file, each alongside its source', async () => {
+    const [a, b, c] = tmpFiles('# A', '# B', '# C')
+    const code = await run([a, b, c])
+    expect(code).toBe(0)
+    for (const f of [a, b, c]) {
+      expect(existsSync(f.replace(/\.md$/, '.html'))).toBe(true)
+    }
+  })
+
+  it('routes multiple files into an --output directory', async () => {
+    const [a, b] = tmpFiles('# A', '# B')
+    const out = mkdtempSync(join(tmpdir(), 'md2html-multi-out-'))
+    const code = await run([a, b, '-o', out])
+    expect(code).toBe(0)
+    expect(existsSync(join(out, 'f1.html'))).toBe(true)
+    expect(existsSync(join(out, 'f2.html'))).toBe(true)
+  })
+
+  it('rewrites cross-file .md links between listed files', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'md2html-multi-links-'))
+    const a = join(dir, 'a.md')
+    const b = join(dir, 'b.md')
+    writeFileSync(a, '# A\n\n[to b](./b.md)')
+    writeFileSync(b, '# B\n\n[to a](./a.md)')
+    const code = await run([a, b, '--theme', 'claude'])
+    expect(code).toBe(0)
+    expect(readFileSync(a.replace(/\.md$/, '.html'), 'utf8')).toContain('href="./b.html"')
+    expect(readFileSync(b.replace(/\.md$/, '.html'), 'utf8')).toContain('href="./a.html"')
+  })
+
+  it('returns 1 when any listed file is missing, before converting', async () => {
+    const [a] = tmpFiles('# A')
+    expect(await run([a, '/no/such/file.md'])).toBe(1)
+  })
+
+  it('reports a converted count for multiple inputs', async () => {
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation(() => true)
+    const [a, b] = tmpFiles('# A', '# B')
+    expect(await run([a, b])).toBe(0)
+    expect(stdout).toHaveBeenCalledWith(expect.stringContaining('Converted 2/2 file(s)'))
+  })
+})
+
 describe('cli run() — folder input', () => {
   function tmpTree(): string {
     const root = mkdtempSync(join(tmpdir(), 'md2html-tree-'))
