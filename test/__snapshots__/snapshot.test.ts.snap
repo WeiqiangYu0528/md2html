@@ -41,8 +41,10 @@ exports[`full pipeline > renders the kitchen-sink fixture to stable HTML 1`] = `
   --callout-caution-edge: #c0392b;
   --callout-caution-bg: #fbeeec;
 
+  --table-head-bg: rgba(11, 11, 11, 0.045);
+  --table-row-alt: rgba(11, 11, 11, 0.018);
   --table-head-rule: var(--rule-strong);
-  --row-hover: rgba(11, 11, 11, 0.025);
+  --row-hover: rgba(11, 11, 11, 0.04);
   --checkbox-border: rgba(11, 11, 11, 0.28);
   --checkbox-face: #ffffff;
 }
@@ -224,28 +226,43 @@ body.theme-claude {
   --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m15 9-6 6'/%3E%3Cpath d='m9 9 6 6'/%3E%3C/svg%3E");
 }
 
-/* Tables: no outer frame, hairline row rules, a stronger rule under the head.
-   Header cells are weighted, not filled — the docs keep tables airy. */
+/* Tables */
 .theme-claude .table-wrap { margin: 1.5rem 0; overflow-x: auto; }
 .theme-claude table {
   width: 100%;
-  border-collapse: collapse;
+  min-width: 48rem;
+  border: 1px solid var(--rule);
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
+}
+.theme-claude table:has(thead tr > :nth-child(2):last-child) {
+  width: max-content;
+  min-width: 0;
+  table-layout: auto;
+}
+.theme-claude table:has(thead tr > :nth-child(3)) :is(th, td):first-child {
+  width: 1%;
+  min-width: 8rem;
 }
 .theme-claude th, .theme-claude td {
   text-align: left;
-  padding: 0.5rem 1rem 0.5rem 0;
-  border-bottom: 0.5px solid var(--rule);
+  padding: 0.65rem 0.75rem;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
   vertical-align: top;
+  line-height: 1.5;
 }
-.theme-claude thead th {
-  font-weight: 600;
-  border-bottom: 1px solid var(--table-head-rule);
-  padding-top: 0;
-}
-.theme-claude tbody tr:hover { background: var(--row-hover); }
+.theme-claude th:last-child, .theme-claude td:last-child { border-right: none; }
 .theme-claude tbody tr:last-child td { border-bottom: none; }
+.theme-claude thead th {
+  background: var(--table-head-bg);
+  border-bottom-color: var(--table-head-rule);
+  font-weight: 600;
+}
+.theme-claude tbody tr:nth-child(even) { background: var(--table-row-alt); }
+.theme-claude tbody tr:hover { background: var(--row-hover); }
 
 .theme-claude ul, .theme-claude ol { padding-left: 1.4rem; }
 .theme-claude li { margin: 0.3rem 0; }

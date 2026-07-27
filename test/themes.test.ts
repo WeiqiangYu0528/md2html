@@ -13,6 +13,39 @@ describe('themes', () => {
     expect(theme.css.length).toBeGreaterThan(0)
   })
 
+  it('styles Claude tables as a balanced grid', () => {
+    const css = loadTheme('claude').css
+
+    expect(css).toContain('--table-head-bg: rgba(11, 11, 11, 0.045);')
+    expect(css).toContain('--table-row-alt: rgba(11, 11, 11, 0.018);')
+    expect(css).toContain('--table-head-rule: var(--rule-strong);')
+    expect(css).toContain('--row-hover: rgba(11, 11, 11, 0.04);')
+    expect(css).toMatch(/table \{[^}]*min-width: 48rem;[^}]*border: 1px solid var\(--rule\);/s)
+    expect(css).toMatch(/th, [^{]+ td \{[^}]*border-right: 1px solid var\(--rule\);[^}]*border-bottom: 1px solid var\(--rule\);/s)
+    expect(css).toMatch(/th, [^{]+ td \{[^}]*line-height: 1\.5;/s)
+    expect(css).toContain('.theme-claude tbody tr:nth-child(even) {')
+    expect(css).toContain('background: var(--table-row-alt);')
+  })
+
+  it('sizes two-column Claude tables to content while wider tables retain auto layout', () => {
+    const css = loadTheme('claude').css
+
+    expect(css).toContain(`.theme-claude table:has(thead tr > :nth-child(2):last-child) {
+  width: max-content;
+  min-width: 0;
+  table-layout: auto;
+}`)
+    expect(css).not.toContain('table-layout: fixed;')
+    expect(css).not.toContain('overflow-wrap: anywhere;')
+    expect(css).toContain(`.theme-claude table:has(thead tr > :nth-child(3)) :is(th, td):first-child {
+  width: 1%;
+  min-width: 8rem;
+}`)
+    expect(css).not.toContain(
+      '.theme-claude table:not(:has(thead tr > :nth-child(2):last-child)) :is(th, td):first-child',
+    )
+  })
+
   it('resolves shikiThemeFile into a parsed custom Shiki theme object', () => {
     // The claude theme ships its own warm "parchment" code palette via the
     // manifest's `shikiThemeFile`, rather than naming a built-in Shiki theme.
@@ -80,6 +113,18 @@ describe('themes', () => {
     expect((theme.mermaid as Record<string, unknown>).htmlLabels).toBe(false)
   })
 
+  it('overrides Claude table colors for dark mode', () => {
+    const css = loadTheme('claude-dark').css
+
+    expect(css).toContain('--table-head-bg: rgba(230, 232, 235, 0.08);')
+    expect(css).toContain('--table-row-alt: rgba(230, 232, 235, 0.025);')
+    expect(css).toContain('--table-head-rule: var(--rule-strong);')
+    expect(css).toContain('--row-hover: rgba(230, 232, 235, 0.06);')
+    expect(css.lastIndexOf('--table-head-bg: rgba(230, 232, 235, 0.08);')).toBeGreaterThan(
+      css.indexOf('--table-head-bg: rgba(11, 11, 11, 0.045);'),
+    )
+  })
+
   it('lists gpt', () => {
     expect(listThemes()).toContain('gpt')
   })
@@ -115,6 +160,39 @@ describe('themes', () => {
   text-align: inherit;
   text-wrap: initial;
 }`)
+  })
+
+  it('styles GPT tables as a balanced grid', () => {
+    const css = loadTheme('gpt').css
+
+    expect(css).toContain('--table-head-bg: #f3f3f3;')
+    expect(css).toContain('--table-row-alt: #fafafa;')
+    expect(css).toContain('--table-head-rule: #d5d5d5;')
+    expect(css).toContain('--row-hover: #f4f4f4;')
+    expect(css).toMatch(/table \{[^}]*min-width: 48rem;[^}]*border: 1px solid var\(--rule\);/s)
+    expect(css).toMatch(/th, [^{]+ td \{[^}]*border-right: 1px solid var\(--rule\);[^}]*border-bottom: 1px solid var\(--rule\);/s)
+    expect(css).toMatch(/th, [^{]+ td \{[^}]*line-height: 1\.5;/s)
+    expect(css).toContain('.theme-gpt tbody tr:nth-child(even) {')
+    expect(css).toContain('background: var(--table-row-alt);')
+  })
+
+  it('sizes two-column GPT tables to content while wider tables retain auto layout', () => {
+    const css = loadTheme('gpt').css
+
+    expect(css).toContain(`.theme-gpt table:has(thead tr > :nth-child(2):last-child) {
+  width: max-content;
+  min-width: 0;
+  table-layout: auto;
+}`)
+    expect(css).not.toContain('table-layout: fixed;')
+    expect(css).not.toContain('overflow-wrap: anywhere;')
+    expect(css).toContain(`.theme-gpt table:has(thead tr > :nth-child(3)) :is(th, td):first-child {
+  width: 1%;
+  min-width: 8rem;
+}`)
+    expect(css).not.toContain(
+      '.theme-gpt table:not(:has(thead tr > :nth-child(2):last-child)) :is(th, td):first-child',
+    )
   })
 
   it('uses a wide concise desktop gutter before truncating gpt TOC side-rail links', () => {

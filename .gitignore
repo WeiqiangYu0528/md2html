@@ -8,6 +8,11 @@ dist/
 samples/*.html
 .worktrees/
 
+# Local tooling scratch
+.claude/
+.playwright-mcp/
+docs/
+
 # Local secrets — never commit
 secret
 *.secret
