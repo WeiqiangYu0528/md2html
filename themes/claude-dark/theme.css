@@ -30,8 +30,10 @@
   --callout-caution-edge: #d4584a;
   --callout-caution-bg: #2a1d1a;
 
+  --table-head-bg: rgba(230, 232, 235, 0.08);
+  --table-row-alt: rgba(230, 232, 235, 0.025);
   --table-head-rule: var(--rule-strong);
-  --row-hover: rgba(230, 232, 235, 0.04);
+  --row-hover: rgba(230, 232, 235, 0.06);
   --checkbox-border: rgba(230, 232, 235, 0.3);
   --checkbox-face: #1c1f23;
 }
